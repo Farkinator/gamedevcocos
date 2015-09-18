@@ -10,6 +10,40 @@ function Block(col,row,board)
     this.board = board;
     this.block_type = this.set_block();
 
+    //User input handler
+    var listener1 = cc.EventListener.create(
+    {
+        event: cc.EventListener.TOUCH_ONE_BY_ONE,
+        swallowTouches: true,
+        onTouchBegan: function(touch, event)
+        {
+            var target = event.getCurrentTarget();
+
+            var locationInNode = target.convertToNodeSpace(touch.getLocation());
+            var s = target.getContentSize();
+            var rect = cc.rect(0,0,s.width,s.height);
+
+            if (cc.rectContainsPoint(rect,locationInNode))
+            {
+                return true;
+            }
+            return false;
+        },
+
+        onTouchMoved: function(touch,event)
+        {
+            var target = event.getCurrentTarget();
+            var delta = touch.getDelta();
+            target.x += delta.x;
+            target.y += delta.y;
+        },
+
+        onTouchEnded: function (touch,event)
+        {
+            var target = event.getCurrentTarget();
+        }
+    });
+
     //Methods
     this.match = function(x,y)
     {
@@ -94,6 +128,12 @@ function Block(col,row,board)
                 board.delete(i,row);
                 board.dropDown(i,row);
             }
+        }
+        else
+        {
+            temp = this.block_type;
+            this.block_type = block2.block_type;
+            block2.block_type = temp;
         }
     };
 
