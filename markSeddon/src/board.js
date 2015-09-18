@@ -15,7 +15,7 @@ var Board = cc.Sprite.extend({
             //Returns the pixel coordinates for the given array coordinates on the board. This is LOCAL COORDINATES
             //meaning the value should only be used by children of the board (or be converted to global coordinates
             //before being used)
-            var out = new Vec2(0,0);
+            var out = {x:0,y:0};
             out.x = this.block_size * x + (this.block_offset - 1) * x;
             out.y = this.block_size * y + (this.block_offset - 1) * y;
             return out;
