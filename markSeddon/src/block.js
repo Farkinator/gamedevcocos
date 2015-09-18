@@ -98,7 +98,7 @@ var Block= cc.Sprite.extend({
         }
     },
     moveDown:function(){
-        
+
     }
     //User input
 });
