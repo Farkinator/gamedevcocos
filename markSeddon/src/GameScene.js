@@ -8,5 +8,7 @@ var GameScene = cc.Scene.extend({
        this.addChild(new BackgroundLayer());
        this.addChild(new BoardLayer());
        this.addChild(new ScoreLayer());
+
+
    }
 });
