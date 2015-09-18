@@ -44,3 +44,4 @@ var MainMenuScene = cc.Scene.extend({
         this.addChild(layer);
     }
 });
+

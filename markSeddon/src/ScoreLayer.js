@@ -10,7 +10,7 @@ var ScoreLayer = cc.Layer.extend({
     },
 
     init:function(){
-        this.super();
+        this._super();
 
     }
 });

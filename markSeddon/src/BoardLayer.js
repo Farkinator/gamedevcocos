@@ -13,10 +13,12 @@ var BoardLayer = cc.Layer.extend({
         this.init();
     },
 
-    init:function(){
-        this.super();
+    init:function() {
+        this._super();
         //Instantiate the board.
-        var gameboard = new Board();
-        
+        var board = new Board();
+        board.setPosition(cc.p(600, 600));
+        this.addChild(board);
     }
+
 });
