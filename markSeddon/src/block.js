@@ -98,6 +98,7 @@ var Block= cc.Sprite.extend({
         }
     },
     moveDown:function(){
+        this.board.getCoord(this.row, this.col);
 
     }
     //User input

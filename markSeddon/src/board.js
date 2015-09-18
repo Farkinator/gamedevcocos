@@ -17,6 +17,8 @@ var Board = cc.Sprite.extend({
             //before being used)
             var out = new Vec2(0,0);
             out.x = this.block_size * x + (this.block_offset - 1) * x;
+            out.y = this.block_size * y + (this.block_offset - 1) * y;
+            return out;
     },
 
     instantiate:function () {
