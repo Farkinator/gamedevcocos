@@ -5,11 +5,13 @@
 var Block= cc.Sprite.extend({
     ctor:function(in_row, in_col, in_board){
         //Initialization
-        this._super(res.block)
+        this._super();
         this.row = in_row;
         this.col = in_col;
         this.board = in_board;
         this.block_type = this.set_block();
+
+
     },
 
 
@@ -21,7 +23,7 @@ var Block= cc.Sprite.extend({
     },
 
     set_block:function(){
-        var int = Math.floor((Math.random() * 6) + 1);
+        var int = Math.floor(Math.random() * 6);
         var options = ["red", "blue", "green", "orange", "yellow", "purple"];
         return options[int];
     },
@@ -55,7 +57,6 @@ var Block= cc.Sprite.extend({
             //Scoring
             //SCORE += 100 * up_down;
             //SCORE += 100 * left_right;
-
             //Deleting
             var i;
             for (i=this.col-counter_left+1; i<this.col+counter_right-1; i++)
@@ -65,7 +66,7 @@ var Block= cc.Sprite.extend({
 
             //Dropping Down
             for (i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
-                board.dropDown(i,this.row);
+                this.board.dropDown(i,this.row);
             for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
                 this.board.dropDown(this.col,i);
         }
@@ -78,7 +79,7 @@ var Block= cc.Sprite.extend({
             //Deleting
             var i;
             for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++);
-                this.board.delete(col,i);
+                this.board.delete(this.col,i);
 
             //Dropping Down
             for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
