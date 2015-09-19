@@ -8,12 +8,11 @@ var Board = cc.Sprite.extend({
         this.block_offset = 5; //how much space is in between blocks in the board
         this.block_boarder = 10; //how thick the edges of the board are.
         //this.rotation_speed: 15;
-        this.locked = 0;//Number of movement actions happening. if this is a falsy value (0) then the board is unlocked
+        this.locked = 0;//Number of movement actions happening. if this is a falsey value (0) then the board is unlocked
                         //and will accept user input. Otherwise it is locked. Should always be >=0. Whenever something
                         //adds to this value it must later subtract from it an equal amount.
         this.arr = [];
         this.instantiate();
-
         BOARD = this;
     },
     getCoord:function(x,y){
@@ -21,8 +20,15 @@ var Board = cc.Sprite.extend({
             //meaning the value should only be used by children of the board (or be converted to global coordinates
             //before being used)
             var out = {x:0,y:0};
-            out.x = this.block_boarder + this.block_size * (x + .5) + (this.block_offset) * (x-1);
-            out.y = this.block_boarder + this.block_size * (y + .5) + (this.block_offset) * (y-1);
+            console.log("X: " + x + " Y: " + y);
+
+            if(this.rotation == 0){
+                out.x = this.block_boarder + this.block_size * (x + .5) + (this.block_offset) * (x-1);
+                out.y = this.block_boarder + this.block_size * (y + .5) + (this.block_offset) * (y-1);
+            }
+            if(this.rotation == 90){
+
+            }
             return out;
     },
 

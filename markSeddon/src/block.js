@@ -115,7 +115,7 @@ var Block= cc.Sprite.extend({
                 this.board.delete(this.col,i);
 
             for (i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
-                board.dropDown(i,this.row);
+                this.board.dropDown(i,this.row);
             for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
                 this.board.dropDown(this.col,i);
         }
@@ -140,7 +140,7 @@ var Block= cc.Sprite.extend({
             var multiplier = left_right - 1;
             SCORE += 100 * (multiplier - 2) * (multiplier - 2);
 
-            for (var i=this.col-counter_left+1; i<this.col_counter_right-1; i++)
+            for (var i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
 //>>>>>>> 28ed139d64d9e6d00417991375f5d4a9324523ca
             {
                 this.board.delete(i,this.row);
@@ -149,7 +149,7 @@ var Block= cc.Sprite.extend({
         }
         else
         {
-            temp = this.block_type;
+            var temp = this.block_type;
             this.block_type = block2.block_type;
             block2.block_type = temp;
         }
