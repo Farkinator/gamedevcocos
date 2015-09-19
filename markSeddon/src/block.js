@@ -2,131 +2,138 @@
  * Created by Donovk 3 on 9/16/2015.
  */
 
-function Block(col,row,board)
-{
-    //Initialization
-    this.row = row;
-    this.col = col;
-    this.board = board;
-    this.block_type = this.set_block();
+var Block= cc.Sprite.extend({
+    ctor:function(in_row, in_col, in_board){
+        //Initialization
+        this.row = in_row;
+        this.col = in_col;
+        this.board = in_board;
+        this.block_type = this.set_block();
 
-    //User input handler
-    var listener1 = cc.EventListener.create(
-    {
-        event: cc.EventListener.TOUCH_ONE_BY_ONE,
-        swallowTouches: true,
-        onTouchBegan: function(touch, event)
-        {
-            var target = event.getCurrentTarget();
-
-            var locationInNode = target.convertToNodeSpace(touch.getLocation());
-            var s = target.getContentSize();
-            var rect = cc.rect(0,0,s.width,s.height);
-
-            if (cc.rectContainsPoint(rect,locationInNode))
+        //User input handler
+        var listener1 = cc.EventListener.create(
             {
-                return true;
-            }
-            return false;
-        },
+                event: cc.EventListener.TOUCH_ONE_BY_ONE,
+                swallowTouches: true,
+                onTouchBegan: function(touch, event)
+                {
+                    var target = event.getCurrentTarget();
 
-        onTouchMoved: function(touch,event)
-        {
-            var target = event.getCurrentTarget();
-            var delta = touch.getDelta();
-            target.x += delta.x;
-            target.y += delta.y;
-        },
+                    var locationInNode = target.convertToNodeSpace(touch.getLocation());
+                    var s = target.getContentSize();
+                    var rect = cc.rect(0,0,s.width,s.height);
 
-        onTouchEnded: function (touch,event)
-        {
-            var target = event.getCurrentTarget();
-        }
-    });
+                    return cc.rectContainsPoint(rect,locationInNode);
+                },
+
+                onTouchMoved: function(touch,event)
+                {
+                    var target = event.getCurrentTarget();
+                    var delta = touch.getDelta();
+                    target.x += delta.x;
+                    target.y += delta.y;
+                },
+
+                onTouchEnded: function (touch,event)
+                {
+                    var target = event.getCurrentTarget();
+                }
+            });
+    },
+
 
     //Methods
-    this.match = function(x,y)
+    match:function(x,y)
     {
-        block2 = board.getBlock(x,y);
+        var block2 = this.board.getBlock(x,y);
         return (this.block_type == block2.block_type);
-    };
+    },
 
-    this.set_block = function()
-    {
-        var int = Math.floor((Math.random() * 6) + 1);
-        var options = ["red", "blue", "green", "orange", "yellow", "purple"];
-    };
+    set_block:function(){
+        //var int = Math.floor((Math.random() * 6) + 1);
+        //var options = ["red", "blue", "green", "orange", "yellow", "purple"];
+        return Math.floor((Math.random() * 6) + 1);
+    },
 
-    this.swap = function(block2)
-    {
+    swap:function(block2){
         //Swaps the blocks
-        temp = this.block_type;
+        var temp = this.block_type;
         this.block_type = block2.block_type;
         block2.block_type = temp;
 
+        this.check_matches(block2);
+
+    },
+    moveDown:function(){
+        this.board.getCoord(this.row, this.col);
+
+    },
+    check_matches:function(block2)
+    {
         //Check for all possible matches
         var counter_up = 1;
         var counter_left = 1;
         var counter_right = 1;
         var counter_down = 1;
 
-        while (this.match(col-counter_left,row)) //Check left
+        while (this.match(this.col-counter_left,this.row)) //Check left
             counter_left++;
-        while (this.match(col,row+counter_up)) //Check up
+        while (this.match(this.col,this.row+counter_up)) //Check up
             counter_up++;
-        while (this.match(col+counter_right,row)) //Check right
+        while (this.match(this.col+counter_right,this.row)) //Check right
             counter_right++;
-        while (this.match(col, row-counter_down)) //Check down
+        while (this.match(this.col, this.row-counter_down)) //Check down
             counter_down++;
         var up_down = counter_up + counter_down - 1;
         var left_right = counter_left + counter_right - 1;
 
         if (up_down > 2 && left_right > 2)
         {
+            //Most likely going to be handled somewhere else.
             //Scoring
-            SCORE += 100 * up_down;
-            SCORE += 100 * left_right;
+            var multiplier = up_down + left_right - 1;
+            SCORE += 100 * (multiplier - 2) * (multiplier - 2);
 
             //Deleting
-            var i;
-            for (i=col-counter_left+1; i<col+counter_right-1; i++)
-                board.delete(i,row);
-            for (i=row-counter_down+1; i<row+counter_up-1; i++)
-                board.delete(col,i);
+
+            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++)
+                this.board.delete(i,this.row);
+            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
+                this.board.delete(this.col,i);
 
             //Dropping Down
-            for (i=col-counter_left+1; i<col_counter_right-1; i++)
-                board.dropDown(i,row);
-            for (i=row-counter_down+1; i<row+counter_up-1; i++)
-                board.dropDown(col,i);
+            for (var i=this.col-counter_left+1; i<this.col_counter_right-1; i++)
+                this.board.dropDown(i,this.row);
+            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
+                this.board.dropDown(this.col,i);
         }
 
         else if (up_down > 2 && left_right < 3)
         {
             //Scoring
-            SCORE += 100 * up_down;
+            var multiplier = up_down - 1;
+            SCORE += 100 * (multiplier - 2) * (multiplier - 2);
 
             //Deleting
-            var i;
-            for (i=row-counter_down+1; i<row+counter_up-1; i++);
-                board.delete(col,i);
+            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++);
+            this.board.delete(col,i);
 
             //Dropping Down
-            for (i=row-counter_down+1; i<row+counter_up-1; i++)
-                board.dropDown(col,i);
+            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
+                this.board.dropDown(this.col,i);
         }
 
         else if (left_right > 2 && up_down < 3)
         {
             //Scoring
-            SCORE += 100 * left_right;
+            var multiplier = left_right - 1;
+            SCORE += 100 * (multiplier - 2) * (multiplier - 2);
 
             //Deleting and Drop Down
-            var i;
-            for (i=col-counter_left+1; i<col_counter_right-1; i++)
+            for (var i=this.col-counter_left+1; i<this.col_counter_right-1; i++)
             {
-                board.delete(i,row);
-                board.dropDown(i,row);
+                this.board.delete(i,this.row);
+                this.board.dropDown(i,this.row);
             }
         }
         else
@@ -135,8 +142,6 @@ function Block(col,row,board)
             this.block_type = block2.block_type;
             block2.block_type = temp;
         }
-    };
-
-    //User input
-}
+    }
+});
 
