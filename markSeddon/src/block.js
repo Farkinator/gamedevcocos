@@ -11,6 +11,7 @@ var Block= cc.Sprite.extend({
         this.block_type = this.set_block();
 
         //User input handler
+
         var listener1 = cc.EventListener.create(
             {
                 event: cc.EventListener.TOUCH_ONE_BY_ONE,
