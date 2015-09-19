@@ -10,6 +10,8 @@ var Board = cc.Sprite.extend({
         this.locked = true;
         this.arr = [];
         this.instantiate();
+
+        BOARD = this;
     },
     getCoord:function(x,y){
             //Returns the pixel coordinates for the given array coordinates on the board. This is LOCAL COORDINATES
@@ -50,6 +52,7 @@ var Board = cc.Sprite.extend({
         }
         if(y < this.arr_size) {
             if(y == this.arr_size - 1){
+                console.log("Top row!");
                 //if this is the top row...
                 var temp = new Block(x,y,this);
                 this.arr[x][y] = temp;
@@ -68,7 +71,7 @@ var Board = cc.Sprite.extend({
                 }
                 while(this.arr[x][y] == null){
                     //A cleanup call to make sure nothing is left hanging.
-                    console.log("an additional dropdown was required.");
+                    //console.log("an additional dropdown was required.");
                     this.dropDown(x,y);
                 }
             }
@@ -118,14 +121,17 @@ var Board = cc.Sprite.extend({
         return this.arr[x][y];
     },
 
-
+    //var seq = new cc.Sequence (
+    //    new cc.EaseOut(new cc.MoveTo(1,touchLoc),3.0),
+    //    callback);
     rotate:function(){
         //This rotates the board counter-clockwise, both visually and internally.
         this.locked = true;//The player should not be able to make moves while the board is rotating.
-        this.array_rotate();//This rotates the array.
-        var rotate_action = RotateBy.create(1,-90);
+        this.arrayRotate();//This rotates the array.
+        var rotate_action = cc.RotateBy.create(1,-90);
         var unlock = function(){this.locked = false;};
-        var sequence = Sequence.create(rotate_action,unlock);
+        var sequence =  new cc.Sequence(new cc.RotateBy(1,-90),new cc.callFunc(unlock));//cc.Sequence.create(rotate_action,unlock);
+
         this.runAction(sequence);
     },
 

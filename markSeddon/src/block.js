@@ -3,13 +3,18 @@
  */
 
 var Block= cc.Sprite.extend({
-    ctor:function(in_row, in_col, in_board){
+    ctor:function(in_col, in_row, in_board){
         //Initialization
-        this._super(res.block)
+        this._super(res.blocks[this.set_block()]);
+        console.log("row: " + in_row + " col: " + in_col);
         this.row = in_row;
         this.col = in_col;
         this.board = in_board;
         this.block_type = this.set_block();
+        //console.log(this);
+        this.action = null;
+        //this.setSprite(res.blocks[this.block_type]);
+
     },
 
 
@@ -21,9 +26,9 @@ var Block= cc.Sprite.extend({
     },
 
     set_block:function(){
-        var int = Math.floor((Math.random() * 6) + 1);
-        var options = ["red", "blue", "green", "orange", "yellow", "purple"];
-        return options[int];
+        var int = Math.floor(Math.random() * 6);
+        //var options = ["red", "blue", "green", "orange", "yellow", "purple"];
+        return int; //options[int];
     },
 
     swap:function(block2){
@@ -101,8 +106,15 @@ var Block= cc.Sprite.extend({
     },
     moveDown:function(){
 
-        cc.MoveTo(this.board.getCoord(this.row, this.col));
-
+        this.row -= 1;
+        var dest = this.board.getCoord(this.col,this.row);
+        console.log(dest);
+        console.log("Row: " + this.row + " col: " + this.col);
+        var move = new cc.MoveTo(1,dest);
+        this.runAction(move);
+        //console.log(this.setSprite);
+        //cc.MoveTo(this.board.getCoord(this.row, this.col));
+        //if(this.action)
     }
     //User input
 });
