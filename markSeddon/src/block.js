@@ -60,6 +60,8 @@ var Block= cc.Sprite.extend({
     match:function(x,y)
     {
         var block2 = this.board.getBlock(x,y);
+        //console.log(this);
+        //console.log(block2);
         return (this.block_type == block2.block_type);
     },
 
@@ -77,7 +79,7 @@ var Block= cc.Sprite.extend({
 
         if (!(this.check_matches()))
         {
-            var temp = this.block_type;
+            temp = this.block_type;
             this.block_type = block2.block_type;
             block2.block_type = temp;
         }
@@ -121,7 +123,7 @@ var Block= cc.Sprite.extend({
                 this.board.delete(this.col,i);
 
             for (i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
-                board.dropDown(i,this.row);
+                this.board.dropDown(i,this.row);
             for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
                 this.board.dropDown(this.col,i);
 
@@ -217,14 +219,40 @@ var Block= cc.Sprite.extend({
         var counter_right = 1;
         var counter_down = 1;
 
-        while (this.match(this.col-counter_left,this.row) && (this.col-counter_left >= 0)) //Check left
-            counter_left++;
-        while (this.match(this.col,this.row+counter_up) && (this.row+counter_up <= 8)) //Check up
-            counter_up++;
-        while (this.match(this.col+counter_right,this.row) && (this.col+counter_right <= 8)) //Check right
-            counter_right++;
-        while (this.match(this.col, this.row-counter_down) && (this.row-counter_down >= 0)) //Check down
-            counter_down++;
+        while (this.col-counter_left >= 0) //Check left
+        {
+            //console.log("while1");
+            //console.log(this.col);
+            //console.log(counter_left);
+            if (this.match(this.col-counter_left, this.row))
+                counter_left++;
+            else
+                break;
+        }
+        while (this.row+counter_up <= 7) //Check up
+        {
+            //console.log("while2");
+            if (this.match(this.col, this.row+counter_up))
+                counter_up++;
+            else
+                break;
+        }
+        while (this.col+counter_right <= 7) //Check right
+        {
+            //console.log("while3");
+            if (this.match(this.col+counter_right, this.row))
+                counter_right++;
+            else
+                break;
+        }
+        while (this.row-counter_down >= 0) //Check down
+        {
+            //console.log("while4");
+            if (this.match(this.col, this.row-counter_down))
+                counter_down++;
+            else
+                break;
+        }
         var up_down = counter_up + counter_down - 1;
         var left_right = counter_left + counter_right - 1;
         return (up_down > 2 || left_right > 2);
