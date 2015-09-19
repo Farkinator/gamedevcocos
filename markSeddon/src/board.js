@@ -35,6 +35,43 @@ var Board = cc.Sprite.extend({
             this.dropDown(i,0);
         }
         this.locked = false;
+        //****************************************
+        if (!(this.prep_check_moves()))
+            this.instantiate();
+        //****************************************
+    },
+
+    prep_check_moves:function()
+    {
+        for (var i = 0; i < this.arr_size; i++)
+        {
+            var bool;
+            for (var j = 0; j < this.arr_size; j++)
+            {
+                var n1, n2, n3, n4;
+                if (i < 8)
+                    n1 += 1;
+                if (i > 0)
+                    n2 -= 1;
+                if (j < 8)
+                    n3 += 1;
+                if (j > 0)
+                    n4 -= 1;
+                bool = (this.arr[n1][j]).are_there_moves();
+                if (bool)
+                    return true;
+                bool = (this.arr[n2][j]).are_there_moves();
+                if (bool)
+                    return true;
+                bool = (this.arr[i][n3]).are_there_moves();
+                if (bool)
+                    return true;
+                bool = (this.arr[i][n4]).are_there_moves();
+                if (bool)
+                    return true;
+            }
+            return false;
+        }
     },
 
 

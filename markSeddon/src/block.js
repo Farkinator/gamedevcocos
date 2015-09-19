@@ -61,14 +61,19 @@ var Block= cc.Sprite.extend({
         this.block_type = block2.block_type;
         block2.block_type = temp;
 
-        this.check_matches(block2);
+        if (!(this.check_matches()))
+        {
+            var temp = this.block_type;
+            this.block_type = block2.block_type;
+            block2.block_type = temp;
+        }
 
     },
     moveDown:function(){
         this.board.getCoord(this.row, this.col);
 
     },
-    check_matches:function(block2)
+    check_matches:function()
     {
         //Check for all possible matches
         var counter_up = 1;
@@ -106,6 +111,12 @@ var Block= cc.Sprite.extend({
                 this.board.dropDown(i,this.row);
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
                 this.board.dropDown(this.col,i);
+
+            //Verify that there are moves left.
+            if (!(board.prep_check_moves()))
+                game_over();
+
+            return true;
         }
 
         else if (up_down > 2 && left_right < 3)
@@ -121,6 +132,12 @@ var Block= cc.Sprite.extend({
             //Dropping Down
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
                 this.board.dropDown(this.col,i);
+
+            //Verify that there are moves left.
+            if (!(board.prep_check_moves()))
+                game_over();
+
+            return true;
         }
 
         else if (left_right > 2 && up_down < 3)
@@ -135,18 +152,21 @@ var Block= cc.Sprite.extend({
                 this.board.delete(i,this.row);
                 this.board.dropDown(i,this.row);
             }
+
+            //Verify that there are moves left
+            if (!(board.prep_check_moves()))
+                game_over();
+            return true;
         }
         else
         {
-            temp = this.block_type;
-            this.block_type = block2.block_type;
-            block2.block_type = temp;
+            return false;
         }
     },
 
 
     //Call function to check possible matches on board.
-    are_there_moves:function(block2)
+    are_there_moves:function()
     {
         //Check for all possible matches
         var counter_up = 1;
