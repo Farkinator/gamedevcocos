@@ -21,7 +21,7 @@ var ScoreLayer = cc.Layer.extend({
         for(var i = 0; i < 6; i++){
             this.indivscorelabels[i] = new cc.LabelTTF("Score " + (i+1) + ": "+SCORE[i], "Helvetica", 20);
             this.indivscorelabels[i].setColor(cc.color(0,0,0));
-            this.indivscorelabels[i].setPosition(cc.p(800, winsize.height - 80 - 80*i));
+            this.indivscorelabels[i].setPosition(cc.p(840, winsize.height - 80 - 80*i));
             this.addChild(this.indivscorelabels[i]);
         }
     },
