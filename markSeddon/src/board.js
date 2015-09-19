@@ -3,6 +3,7 @@
 var Board = cc.Sprite.extend({
     ctor:function() {
         this._super(res.board_png);
+        BOARD = this;
         this.arr_size = 8;
         this.block_size = 50; //how big the blocks are (diameter or width/height) on the longest dimension.
         this.block_offset = 5; //how much space is in between blocks in the board
@@ -13,14 +14,13 @@ var Board = cc.Sprite.extend({
                         //adds to this value it must later subtract from it an equal amount.
         this.arr = [];
         this.instantiate();
-        BOARD = this;
     },
     getCoord:function(x,y){
             //Returns the pixel coordinates for the given array coordinates on the board. This is LOCAL COORDINATES
             //meaning the value should only be used by children of the board (or be converted to global coordinates
             //before being used)
             var out = {x:0,y:0};
-            console.log("X: " + x + " Y: " + y);
+            //console.log("X: " + x + " Y: " + y);
 
             if(this.rotation == 0){
                 out.x = this.block_boarder + this.block_size * (x + .5) + (this.block_offset) * (x-1);
@@ -35,6 +35,7 @@ var Board = cc.Sprite.extend({
     instantiate:function () {
         //This function will clear arr if needed, and then fill it with blocks. Call it whenever you need to refresh the
         //gameboard (including at the beginning of the game)
+        console.log("INSTANTIATE THIS");
         this.arr = [];
         for (var i = 0; i < this.arr_size; i++) {
             this.arr.push([]);
@@ -45,7 +46,51 @@ var Board = cc.Sprite.extend({
         for (var i = 0; i < this.arr_size; i++) {
             this.dropDown(i,0);
         }
-        //this.unlock();
+        this.locked = false;
+        //****************************************
+        if (!(this.prep_check_moves()))
+            this.instantiate();
+        //****************************************
+    },
+
+    prep_check_moves:function()
+    {
+        for (var i = 0; i < this.arr_size; i++)
+        {
+            var bool;
+            for (var j = 0; j < this.arr_size; j++)
+            {
+                if (i < 7)
+                {
+                    var n1 = i + 1;
+                    bool = (this.arr[n1][j]).are_there_moves();
+                    if (bool)
+                        return true;
+                }
+                if (i > 0)
+                {
+                    var n2 = i - 1;
+                    bool = (this.arr[n2][j]).are_there_moves();
+                    if (bool)
+                        return true;
+                }
+                if (j < 7)
+                {
+                    var n3 = j + 1;
+                    bool = (this.arr[i][n3]).are_there_moves();
+                    if (bool)
+                        return true;
+                }
+                if (j > 0)
+                {
+                    var n4 = j - 1;
+                    bool = (this.arr[i][n4]).are_there_moves();
+                    if (bool)
+                        return true;
+                }
+            }
+            return false;
+        }
     },
 
 
@@ -87,13 +132,13 @@ var Board = cc.Sprite.extend({
     },
     lock:function(){
         //Locks the board, preventing it from accepting user input until unlock is called an equal number of times.
-        console.log("lock function used.");
+        //console.log("lock function used.");
         this.locked++;
     },
 
     unlock:function(){
         //Unlocks the board once, making it accept input again unless something else is also locking it.
-        console.log("unlock function used.");
+        //console.log("unlock function used.");
         this.locked--;
     },
 
