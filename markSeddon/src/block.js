@@ -14,7 +14,6 @@ var Block= cc.Sprite.extend({
         this.col = in_col;
         this.board = in_board;
         this.block_type = this.set_block();
-<<<<<<< HEAD
         //console.log(this);
         this.action = null;
         this.locking = false;
@@ -23,7 +22,6 @@ var Block= cc.Sprite.extend({
         this.y = position.y;
         //this.setSprite(res.blocks[this.block_type]);
 
-=======
 
         //User input handler
         var listener1 = cc.EventListener.create(
@@ -54,7 +52,6 @@ var Block= cc.Sprite.extend({
                     var target = event.getCurrentTarget();
                 }
             });
->>>>>>> 28ed139d64d9e6d00417991375f5d4a9324523ca
     },
 
 
@@ -66,15 +63,9 @@ var Block= cc.Sprite.extend({
     },
 
     set_block:function(){
-<<<<<<< HEAD
         var int = Math.floor(Math.random() * 6);
         //var options = ["red", "blue", "green", "orange", "yellow", "purple"];
         return int; //options[int];
-=======
-        //var int = Math.floor((Math.random() * 6) + 1);
-        //var options = ["red", "blue", "green", "orange", "yellow", "purple"];
-        return Math.floor((Math.random() * 6) + 1);
->>>>>>> 28ed139d64d9e6d00417991375f5d4a9324523ca
     },
 
     swap:function(block2){
@@ -123,16 +114,9 @@ var Block= cc.Sprite.extend({
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
                 this.board.delete(this.col,i);
 
-            //Dropping Down
-<<<<<<< HEAD
             for (i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
                 board.dropDown(i,this.row);
             for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
-=======
-            for (var i=this.col-counter_left+1; i<this.col_counter_right-1; i++)
-                this.board.dropDown(i,this.row);
-            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
->>>>>>> 28ed139d64d9e6d00417991375f5d4a9324523ca
                 this.board.dropDown(this.col,i);
         }
 
@@ -142,15 +126,8 @@ var Block= cc.Sprite.extend({
             var multiplier = up_down - 1;
             SCORE += 100 * (multiplier - 2) * (multiplier - 2);
 
-            //Deleting
-<<<<<<< HEAD
-            var i;
-            for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++);
-                this.board.delete(this.col,i);
-=======
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++);
             this.board.delete(this.col,i);
->>>>>>> 28ed139d64d9e6d00417991375f5d4a9324523ca
 
             //Dropping Down
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
@@ -163,13 +140,8 @@ var Block= cc.Sprite.extend({
             var multiplier = left_right - 1;
             SCORE += 100 * (multiplier - 2) * (multiplier - 2);
 
-            //Deleting and Drop Down
-<<<<<<< HEAD
-            var i;
-            for (i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
-=======
             for (var i=this.col-counter_left+1; i<this.col_counter_right-1; i++)
->>>>>>> 28ed139d64d9e6d00417991375f5d4a9324523ca
+//>>>>>>> 28ed139d64d9e6d00417991375f5d4a9324523ca
             {
                 this.board.delete(i,this.row);
                 this.board.dropDown(i,this.row);
@@ -182,7 +154,6 @@ var Block= cc.Sprite.extend({
             block2.block_type = temp;
         }
     },
-<<<<<<< HEAD
     moveTo:function(dest){
         this.stopAllActions();
         if(this.locking){
@@ -213,12 +184,9 @@ var Block= cc.Sprite.extend({
         //console.log(this.setSprite);
         //cc.MoveTo(this.board.getCoord(this.row, this.col));
         //if(this.action)
-    }
+    },
     //User input
-});
-=======
 
->>>>>>> 28ed139d64d9e6d00417991375f5d4a9324523ca
 
     //Call function to check possible matches on board.
     are_there_moves:function(block2)
