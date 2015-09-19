@@ -19,6 +19,5 @@ var ScoreLayer = cc.Layer.extend({
 
     updateScore:function(){
         this.totalscore.setString("Total Score: " + SCORE[6]);
-
     }
 });
