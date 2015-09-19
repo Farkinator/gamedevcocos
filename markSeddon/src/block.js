@@ -4,15 +4,22 @@
 
 var Block= cc.Sprite.extend({
     ctor:function(in_col, in_row, in_board){
+        if(in_board == undefined){
+            console.log("ERROR - BOARD IS UNDEFINED.");
+        }
         //Initialization
         this._super(res.blocks[this.set_block()]);
-        console.log("row: " + in_row + " col: " + in_col);
+        //console.log("row: " + in_row + " col: " + in_col);
         this.row = in_row;
         this.col = in_col;
         this.board = in_board;
         this.block_type = this.set_block();
         //console.log(this);
         this.action = null;
+        this.locking = false;
+        var position = this.board.getCoord(this.col,this.row);
+        this.x = position.x;
+        this.y = position.y;
         //this.setSprite(res.blocks[this.block_type]);
 
     },
@@ -106,13 +113,23 @@ var Block= cc.Sprite.extend({
     },
     moveTo:function(dest){
         this.stopAllActions();
-        console.log(dest);
-        var move = new cc.MoveTo(1,dest);
-        move.setTag(11);
-        this.runAction(move);
+        if(this.locking){
+            //If actions were stopped, that means there is an extra lock on the board. Remove it.
+            this.board.unlock();
+        }
+        //.log(dest);
+        this.board.lock();
+        this.locking = true
+        var sequence =  new cc.Sequence(new cc.MoveTo(1,dest),new cc.callFunc(function(a){
+            console.log(a);
+            a.board.unlock();
+            a.locking = false;
+        }));
+        //var move =new cc.MoveTo(1,dest) ;
+        //move.setTag(11);
+        this.runAction(sequence);
     },
     moveDown:function(){
-
         this.row -= 1;
         var dest = this.board.getCoord(this.col,this.row);
        //console.log(dest);
