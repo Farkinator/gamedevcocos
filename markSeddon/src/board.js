@@ -4,8 +4,9 @@ var Board = cc.Sprite.extend({
     ctor:function() {
         this._super(res.board_png);
         this.arr_size = 8;
-        this.block_size = 50;
-        this.block_offset = 5;
+        this.block_size = 50; //how big the blocks are (diameter or width/height) on the longest dimension.
+        this.block_offset = 5; //how much space is in between blocks in the board
+        this.block_boarder = 10; //how thick the edges of the board are.
         //this.rotation_speed: 15;
         this.locked = true;
         this.arr = [];
@@ -18,8 +19,8 @@ var Board = cc.Sprite.extend({
             //meaning the value should only be used by children of the board (or be converted to global coordinates
             //before being used)
             var out = {x:0,y:0};
-            out.x = this.block_size * x + (this.block_offset - 1) * x;
-            out.y = this.block_size * y + (this.block_offset - 1) * y;
+            out.x = this.block_boarder + this.block_size * (x + .5) + (this.block_offset) * (x-1);
+            out.y = this.block_boarder + this.block_size * (y + .5) + (this.block_offset) * (y-1);
             return out;
     },
 

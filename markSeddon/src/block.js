@@ -83,7 +83,7 @@ var Block= cc.Sprite.extend({
             //Deleting
             var i;
             for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++);
-                this.board.delete(col,i);
+                this.board.delete(this.col,i);
 
             //Dropping Down
             for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
@@ -104,14 +104,23 @@ var Block= cc.Sprite.extend({
             }
         }
     },
+    moveTo:function(dest){
+        this.stopAllActions();
+        console.log(dest);
+        var move = new cc.MoveTo(1,dest);
+        move.setTag(11);
+        this.runAction(move);
+    },
     moveDown:function(){
 
         this.row -= 1;
         var dest = this.board.getCoord(this.col,this.row);
-        console.log(dest);
-        console.log("Row: " + this.row + " col: " + this.col);
-        var move = new cc.MoveTo(1,dest);
-        this.runAction(move);
+       //console.log(dest);
+        //console.log("Row: " + this.row + " col: " + this.col);
+        //this.moveTo({x:100,y:100});
+        this.moveTo(dest)
+        //var move = new cc.MoveTo(1,dest);
+        //this.runAction(move);
         //console.log(this.setSprite);
         //cc.MoveTo(this.board.getCoord(this.row, this.col));
         //if(this.action)
