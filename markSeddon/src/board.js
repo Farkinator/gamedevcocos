@@ -45,7 +45,44 @@ var Board = cc.Sprite.extend({
         for (var i = 0; i < this.arr_size; i++) {
             this.dropDown(i,0);
         }
-        //this.unlock();
+        this.locked = false;
+        //****************************************
+        if (!(this.prep_check_moves()))
+            this.instantiate();
+        //****************************************
+    },
+
+    prep_check_moves:function()
+    {
+        for (var i = 0; i < this.arr_size; i++)
+        {
+            var bool;
+            for (var j = 0; j < this.arr_size; j++)
+            {
+                var n1, n2, n3, n4;
+                if (i < 8)
+                    n1 = i + 1;
+                if (i > 0)
+                    n2 = i - 1;
+                if (j < 8)
+                    n3 = j + 1;
+                if (j > 0)
+                    n4 = j - 1;
+                bool = (this.arr[n1][j]).are_there_moves();
+                if (bool)
+                    return true;
+                bool = (this.arr[n2][j]).are_there_moves();
+                if (bool)
+                    return true;
+                bool = (this.arr[i][n3]).are_there_moves();
+                if (bool)
+                    return true;
+                bool = (this.arr[i][n4]).are_there_moves();
+                if (bool)
+                    return true;
+            }
+            return false;
+        }
     },
 
 
@@ -87,13 +124,13 @@ var Board = cc.Sprite.extend({
     },
     lock:function(){
         //Locks the board, preventing it from accepting user input until unlock is called an equal number of times.
-        console.log("lock function used.");
+        //console.log("lock function used.");
         this.locked++;
     },
 
     unlock:function(){
         //Unlocks the board once, making it accept input again unless something else is also locking it.
-        console.log("unlock function used.");
+        //console.log("unlock function used.");
         this.locked--;
     },
 
