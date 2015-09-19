@@ -107,7 +107,10 @@ var Block= cc.Sprite.extend({
             //Scoring
 
             var multiplier = up_down + left_right - 1;
-            SCORE += 100 * (multiplier - 2) * (multiplier - 2);
+            //update total score
+            SCORE[6] += 100 * (multiplier - 2) * (multiplier - 2);
+            SCORE[this.block_type] += 100 * (multiplier - 2) * (multiplier - 2);
+            ScoreLayer.updateScore(this.block_type);
             //Deleting
 
             for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++)
@@ -126,7 +129,10 @@ var Block= cc.Sprite.extend({
         {
             //Scoring
             var multiplier = up_down - 1;
-            SCORE += 100 * (multiplier - 2) * (multiplier - 2);
+            //update total score
+            SCORE[6] += 100 * (multiplier - 2) * (multiplier - 2);
+            SCORE[this.block_type] += 100 * (multiplier - 2) * (multiplier - 2);
+            ScoreLayer.updateScore(this.block_type);
 
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++);
                 this.board.delete(this.col,i);
@@ -141,10 +147,12 @@ var Block= cc.Sprite.extend({
         {
             //Scoring
             var multiplier = left_right - 1;
-            SCORE += 100 * (multiplier - 2) * (multiplier - 2);
+            //update total score
+            SCORE[6] += 100 * (multiplier - 2) * (multiplier - 2);
+            SCORE[this.block_type] += 100 * (multiplier - 2) * (multiplier - 2);
+            ScoreLayer.updateScore(this.block_type);
 
 
-            //Deleting and Drop Down
             for (var i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
             {
                 this.board.delete(i,this.row);
@@ -153,7 +161,7 @@ var Block= cc.Sprite.extend({
         }
         else
         {
-            temp = this.block_type;
+            var temp = this.block_type;
             this.block_type = block2.block_type;
             block2.block_type = temp;
         }
