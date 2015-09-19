@@ -109,7 +109,11 @@ var Board = cc.Sprite.extend({
             for(var j = 0; j < this.arr.length; j++){
                 //console.log("x: " + i + " y: " + j + " to x: " + j + " y: " + ((temp.length - 1)-i));
                 //console.log(i);
-                temp[j][(temp.length - 1) - i] = this.arr[i][j];
+                newx = j;
+                newy = (temp.length - 1) - i;
+                this.arr[i][j].row = newy;
+                this.arr[i][j].col = newx;
+                temp[newx][newy] = this.arr[i][j];
             }
         }
         for(var i = 0; i < this.arr.length; i++){
