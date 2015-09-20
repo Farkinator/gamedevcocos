@@ -8,12 +8,13 @@ var Block= cc.Sprite.extend({
             console.log("ERROR - BOARD IS UNDEFINED.");
         }
         //Initialization
-        this._super(res.blocks[this.set_block()]);
+        var type = this.set_block();
+        this._super(res.blocks[type]);
         //console.log("row: " + in_row + " col: " + in_col);
         this.row = in_row;
         this.col = in_col;
         this.board = in_board;
-        this.block_type = this.set_block();
+        this.block_type = type;
         //console.log(this);
         this.action = null;
         this.locking = false;
@@ -22,12 +23,11 @@ var Block= cc.Sprite.extend({
         this.y = position.y;
         //this.setSprite(res.blocks[this.block_type]);
 
-
         //User input handler
         var listener1 = cc.EventListener.create(
             {
                 event: cc.EventListener.TOUCH_ONE_BY_ONE,
-                swallowTouches: true,
+                swallowTouches: false,
                 onTouchBegan: function(touch, event)
                 {
                     var target = event.getCurrentTarget();
@@ -35,7 +35,8 @@ var Block= cc.Sprite.extend({
                     var locationInNode = target.convertToNodeSpace(touch.getLocation());
                     var s = target.getContentSize();
                     var rect = cc.rect(0,0,s.width,s.height);
-
+                    var out = cc.rectContainsPoint(rect,locationInNode);
+                    console.log(out);
                     return cc.rectContainsPoint(rect,locationInNode);
                 },
 
@@ -59,6 +60,11 @@ var Block= cc.Sprite.extend({
     match:function(x,y)
     {
         var block2 = this.board.getBlock(x,y);
+        if(block2 == null){
+            return false;
+        }
+        //console.log(this);
+        //console.log(block2);
         return (this.block_type == block2.block_type);
     },
 
@@ -69,12 +75,22 @@ var Block= cc.Sprite.extend({
     },
 
     swap:function(block2){
+        console.log("SWAPPED");
         //Swaps the blocks
         var temp = this.block_type;
         this.block_type = block2.block_type;
         block2.block_type = temp;
 
-        this.check_matches(block2);
+//<<<<<<< HEAD
+//        this.check_matches(block2);
+//=======
+        if (!(this.check_matches()))
+        {
+            temp = this.block_type;
+            this.block_type = block2.block_type;
+            block2.block_type = temp;
+        }
+//>>>>>>> c7aff5f4a6533dc6feae29646bebf2e1d87b2ec3
 
     },
     moveDown:function(){
@@ -99,7 +115,7 @@ var Block= cc.Sprite.extend({
             counter_down++;
         var up_down = counter_up + counter_down - 1;
         var left_right = counter_left + counter_right - 1;
-
+        console.log("up: " + counter_up + " down " + counter_down + " left: " + counter_left + " right " + counter_right);
         if (up_down > 2 && left_right > 2)
         {
             //Most likely going to be handled somewhere else.
@@ -109,15 +125,19 @@ var Block= cc.Sprite.extend({
 
             //Deleting
 
-            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++)
+            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
                 this.board.delete(i,this.row);
-            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
-                this.board.delete(this.col,i);
-
-            for (i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
+            }
+            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
+                this.board.delete(this.col, i);
+            }
+            for (i=this.col-counter_left+1; i<this.col-counter_right-1; i++){
                 this.board.dropDown(i,this.row);
-            for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
-                this.board.dropDown(this.col,i);
+            }
+            for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
+                this.board.dropDown(this.col, i);
+            }
+            return true;
         }
 
         else if (up_down > 2 && left_right < 3)
@@ -126,12 +146,15 @@ var Block= cc.Sprite.extend({
             var multiplier = up_down - 1;
             SCORE += 100 * (multiplier - 2) * (multiplier - 2);
 
-            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++);
-            this.board.delete(this.col,i);
+            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++){
+                this.board.delete(this.col,i);
+            }
 
             //Dropping Down
-            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
-                this.board.dropDown(this.col,i);
+            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
+                this.board.dropDown(this.col, i);
+            }
+            return true
         }
 
         else if (left_right > 2 && up_down < 3)
@@ -145,12 +168,18 @@ var Block= cc.Sprite.extend({
                 this.board.delete(i,this.row);
                 this.board.dropDown(i,this.row);
             }
+            return true
         }
         else
         {
-            var temp = this.block_type;
-            this.block_type = block2.block_type;
-            block2.block_type = temp;
+
+//<<<<<<< HEAD
+//            var temp = this.block_type;
+//            this.block_type = block2.block_type;
+//            block2.block_type = temp;
+//=======
+            return false;
+//>>>>>>> c7aff5f4a6533dc6feae29646bebf2e1d87b2ec3
         }
     },
     moveTo:function(dest){
@@ -196,14 +225,40 @@ var Block= cc.Sprite.extend({
         var counter_right = 1;
         var counter_down = 1;
 
-        while (this.match(this.col-counter_left,this.row) && (this.col-counter_left >= 0)) //Check left
-            counter_left++;
-        while (this.match(this.col,this.row+counter_up) && (this.row+counter_up <= 8)) //Check up
-            counter_up++;
-        while (this.match(this.col+counter_right,this.row) && (this.col+counter_right <= 8)) //Check right
-            counter_right++;
-        while (this.match(this.col, this.row-counter_down) && (this.row-counter_down >= 0)) //Check down
-            counter_down++;
+        while (this.col-counter_left >= 0) //Check left
+        {
+            //console.log("while1");
+            //console.log(this.col);
+            //console.log(counter_left);
+            if (this.match(this.col-counter_left, this.row))
+                counter_left++;
+            else
+                break;
+        }
+        while (this.row+counter_up <= 7) //Check up
+        {
+            //console.log("while2");
+            if (this.match(this.col, this.row+counter_up))
+                counter_up++;
+            else
+                break;
+        }
+        while (this.col+counter_right <= 7) //Check right
+        {
+            //console.log("while3");
+            if (this.match(this.col+counter_right, this.row))
+                counter_right++;
+            else
+                break;
+        }
+        while (this.row-counter_down >= 0) //Check down
+        {
+            //console.log("while4");
+            if (this.match(this.col, this.row-counter_down))
+                counter_down++;
+            else
+                break;
+        }
         var up_down = counter_up + counter_down - 1;
         var left_right = counter_left + counter_right - 1;
         return (up_down > 2 || left_right > 2);

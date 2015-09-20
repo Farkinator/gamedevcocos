@@ -3,6 +3,7 @@
 var Board = cc.Sprite.extend({
     ctor:function() {
         this._super(res.board_png);
+        BOARD = this;
         this.arr_size = 8;
         this.block_size = 50; //how big the blocks are (diameter or width/height) on the longest dimension.
         this.block_offset = 5; //how much space is in between blocks in the board
@@ -12,8 +13,8 @@ var Board = cc.Sprite.extend({
                         //and will accept user input. Otherwise it is locked. Should always be >=0. Whenever something
                         //adds to this value it must later subtract from it an equal amount.
         this.arr = [];
+        SCORE = 0;
         this.instantiate();
-        BOARD = this;
     },
         _getCoord:function(x,y) {
             var out = {x:0,y:0};
@@ -47,6 +48,7 @@ var Board = cc.Sprite.extend({
     instantiate:function () {
         //This function will clear arr if needed, and then fill it with blocks. Call it whenever you need to refresh the
         //gameboard (including at the beginning of the game)
+        console.log("INSTANTIATE THIS");
         this.arr = [];
         for (var i = 0; i < this.arr_size; i++) {
             this.arr.push([]);
@@ -57,7 +59,50 @@ var Board = cc.Sprite.extend({
         for (var i = 0; i < this.arr_size; i++) {
             this.dropDown(i,0);
         }
-        //this.unlock();
+        //****************************************
+        if (!(this.prep_check_moves()))
+            this.instantiate();
+        //****************************************
+    },
+
+    prep_check_moves:function()
+    {
+        for (var i = 0; i < this.arr_size; i++)
+        {
+            var bool;
+            for (var j = 0; j < this.arr_size; j++)
+            {
+                if (i < 7)
+                {
+                    var n1 = i + 1;
+                    bool = (this.arr[n1][j]).are_there_moves();
+                    if (bool)
+                        return true;
+                }
+                if (i > 0)
+                {
+                    var n2 = i - 1;
+                    bool = (this.arr[n2][j]).are_there_moves();
+                    if (bool)
+                        return true;
+                }
+                if (j < 7)
+                {
+                    var n3 = j + 1;
+                    bool = (this.arr[i][n3]).are_there_moves();
+                    if (bool)
+                        return true;
+                }
+                if (j > 0)
+                {
+                    var n4 = j - 1;
+                    bool = (this.arr[i][n4]).are_there_moves();
+                    if (bool)
+                        return true;
+                }
+            }
+            return false;
+        }
     },
 
 
@@ -127,8 +172,8 @@ var Board = cc.Sprite.extend({
             for(var j = 0; j < this.arr.length; j++){
                 //console.log("x: " + i + " y: " + j + " to x: " + j + " y: " + ((temp.length - 1)-i));
                 //console.log(i);
-                newx = j;
-                newy = (temp.length - 1) - i;
+                var newx = j;
+                var newy = (temp.length - 1) - i;
                 this.arr[i][j].row = newy;
                 this.arr[i][j].col = newx;
                 temp[newx][newy] = this.arr[i][j];
@@ -144,6 +189,9 @@ var Board = cc.Sprite.extend({
 
 
     getBlock:function(x,y){
+        if(y < 0 || x < 0 || y >= this.arr_size || x >= this.arr_size){
+            return null;
+        }
         //returns the block in arr at (x,y)
         return this.arr[x][y];
     },
@@ -182,7 +230,7 @@ var Board = cc.Sprite.extend({
     },
 
     delete:function(x,y){
-        //Makes x,y null. Call dropDown() on this location soon after calling this function, and also visually delte
+        //Makes x,y null. Call dropDown() on this location soon after calling this function, and also visually delete
         //the block.
         this.arr[x][y] = null;
     }
