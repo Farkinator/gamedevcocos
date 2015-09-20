@@ -15,21 +15,33 @@ var Board = cc.Sprite.extend({
         this.instantiate();
         BOARD = this;
     },
+        _getCoord:function(x,y) {
+            var out = {x:0,y:0};
+            out.x = this.block_boarder + this.block_size * (x + .5) + (this.block_offset) * (x-1);
+            out.y = this.block_boarder + this.block_size * (y + .5) + (this.block_offset) * (y-1);
+            //console.log("goes to X: " + x + " Y: " + y);
+            return out;
+        },
     getCoord:function(x,y){
             //Returns the pixel coordinates for the given array coordinates on the board. This is LOCAL COORDINATES
             //meaning the value should only be used by children of the board (or be converted to global coordinates
             //before being used)
-            var out = {x:0,y:0};
-            console.log("X: " + x + " Y: " + y);
+            //console.log("X: " + x + " Y: " + y);
 
             if(this.rotation == 0){
-                out.x = this.block_boarder + this.block_size * (x + .5) + (this.block_offset) * (x-1);
-                out.y = this.block_boarder + this.block_size * (y + .5) + (this.block_offset) * (y-1);
+                return this._getCoord(x,y);
+            }
+            if(this.rotation == 270){
+                return this._getCoord(y,(this.arr_size-1)-x);
+            }
+            if(this.rotation == 180){
+                return this._getCoord((this.arr_size-1)-x,(this.arr_size-1)-y);
             }
             if(this.rotation == 90){
-
+                return this._getCoord((this.arr_size-1)-y,x);
             }
-            return out;
+            console.log("Error, the board is out of alignment!!!!!<-(x5 bad)");
+            //return out;
     },
 
     instantiate:function () {
@@ -45,44 +57,7 @@ var Board = cc.Sprite.extend({
         for (var i = 0; i < this.arr_size; i++) {
             this.dropDown(i,0);
         }
-        this.locked = false;
-        //****************************************
-        if (!(this.prep_check_moves()))
-            this.instantiate();
-        //****************************************
-    },
-
-    prep_check_moves:function()
-    {
-        for (var i = 0; i < this.arr_size; i++)
-        {
-            var bool;
-            for (var j = 0; j < this.arr_size; j++)
-            {
-                var n1, n2, n3, n4;
-                if (i < 8)
-                    n1 = i + 1;
-                if (i > 0)
-                    n2 = i - 1;
-                if (j < 8)
-                    n3 = j + 1;
-                if (j > 0)
-                    n4 = j - 1;
-                bool = (this.arr[n1][j]).are_there_moves();
-                if (bool)
-                    return true;
-                bool = (this.arr[n2][j]).are_there_moves();
-                if (bool)
-                    return true;
-                bool = (this.arr[i][n3]).are_there_moves();
-                if (bool)
-                    return true;
-                bool = (this.arr[i][n4]).are_there_moves();
-                if (bool)
-                    return true;
-            }
-            return false;
-        }
+        //this.unlock();
     },
 
 
@@ -196,7 +171,12 @@ var Board = cc.Sprite.extend({
             var rotate_action = new cc.RotateBy(1,-90);
             block.runAction(rotate_action);
         });
-        var sequence =  new cc.Sequence(new cc.RotateBy(1,90),new cc.callFunc(function(a){a.unlock();}));//cc.Sequence.create(rotate_action,unlock);
+        var sequence =  new cc.Sequence(new cc.RotateBy(1,90),new cc.callFunc(function(a){
+            a.unlock();
+            if(a.rotation >= 360){
+                a.rotation -= 360;
+            }
+        }));//cc.Sequence.create(rotate_action,unlock);
         this.runAction(sequence);
         //this.runAction(sequence);
     },

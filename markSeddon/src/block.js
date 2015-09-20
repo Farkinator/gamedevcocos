@@ -24,7 +24,6 @@ var Block= cc.Sprite.extend({
 
 
         //User input handler
-
         var listener1 = cc.EventListener.create(
             {
                 event: cc.EventListener.TOUCH_ONE_BY_ONE,
@@ -75,19 +74,14 @@ var Block= cc.Sprite.extend({
         this.block_type = block2.block_type;
         block2.block_type = temp;
 
-        if (!(this.check_matches()))
-        {
-            var temp = this.block_type;
-            this.block_type = block2.block_type;
-            block2.block_type = temp;
-        }
+        this.check_matches(block2);
 
     },
     moveDown:function(){
         this.board.getCoord(this.row, this.col);
 
     },
-    check_matches:function()
+    check_matches:function(block2)
     {
         //Check for all possible matches
         var counter_up = 1;
@@ -124,12 +118,6 @@ var Block= cc.Sprite.extend({
                 this.board.dropDown(i,this.row);
             for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
                 this.board.dropDown(this.col,i);
-
-            //Verify that there are moves left.
-            if (!(board.prep_check_moves()))
-                game_over();
-
-            return true;
         }
 
         else if (up_down > 2 && left_right < 3)
@@ -144,12 +132,6 @@ var Block= cc.Sprite.extend({
             //Dropping Down
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
                 this.board.dropDown(this.col,i);
-
-            //Verify that there are moves left.
-            if (!(board.prep_check_moves()))
-                game_over();
-
-            return true;
         }
 
         else if (left_right > 2 && up_down < 3)
@@ -163,18 +145,12 @@ var Block= cc.Sprite.extend({
                 this.board.delete(i,this.row);
                 this.board.dropDown(i,this.row);
             }
-
-            //Verify that there are moves left
-            if (!(board.prep_check_moves()))
-                game_over();
-            return true;
         }
         else
         {
             var temp = this.block_type;
             this.block_type = block2.block_type;
             block2.block_type = temp;
-            return false;
         }
     },
     moveTo:function(dest){
@@ -187,7 +163,7 @@ var Block= cc.Sprite.extend({
         this.board.lock();
         this.locking = true
         var sequence =  new cc.Sequence(new cc.MoveTo(1,dest),new cc.callFunc(function(a){
-            console.log(a);
+            //console.log(a);
             a.board.unlock();
             a.locking = false;
         }));
@@ -198,8 +174,8 @@ var Block= cc.Sprite.extend({
     moveDown:function(){
         this.row -= 1;
         var dest = this.board.getCoord(this.col,this.row);
-       //console.log(dest);
-        //console.log("Row: " + this.row + " col: " + this.col);
+        console.log(dest);
+        console.log("Row: " + this.row + " col: " + this.col);
         //this.moveTo({x:100,y:100});
         this.moveTo(dest)
         //var move = new cc.MoveTo(1,dest);
@@ -212,7 +188,7 @@ var Block= cc.Sprite.extend({
 
 
     //Call function to check possible matches on board.
-    are_there_moves:function()
+    are_there_moves:function(block2)
     {
         //Check for all possible matches
         var counter_up = 1;
