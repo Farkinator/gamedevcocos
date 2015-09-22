@@ -9,12 +9,13 @@ var Block= cc.Sprite.extend({
         }
         //Initialization
 
-        this._super(res.blocks[this.set_block()]);
+        var type = this.set_block();
+        this._super(res.blocks[type]);
         //console.log("row: " + in_row + " col: " + in_col);
         this.row = in_row;
         this.col = in_col;
         this.board = in_board;
-        this.block_type = this.set_block();
+        this.block_type = type;
         //console.log(this);
         this.action = null;
         this.locking = false;
@@ -23,13 +24,11 @@ var Block= cc.Sprite.extend({
         this.y = position.y;
         //this.setSprite(res.blocks[this.block_type]);
 
-
         //User input handler
-
         var listener1 = cc.EventListener.create(
             {
                 event: cc.EventListener.TOUCH_ONE_BY_ONE,
-                swallowTouches: true,
+                swallowTouches: false,
                 onTouchBegan: function(touch, event)
                 {
                     var target = event.getCurrentTarget();
@@ -37,7 +36,8 @@ var Block= cc.Sprite.extend({
                     var locationInNode = target.convertToNodeSpace(touch.getLocation());
                     var s = target.getContentSize();
                     var rect = cc.rect(0,0,s.width,s.height);
-
+                    var out = cc.rectContainsPoint(rect,locationInNode);
+                    console.log(out);
                     return cc.rectContainsPoint(rect,locationInNode);
                 },
 
@@ -61,6 +61,9 @@ var Block= cc.Sprite.extend({
     match:function(x,y)
     {
         var block2 = this.board.getBlock(x,y);
+        if(block2 == null){
+            return false;
+        }
         //console.log(this);
         //console.log(block2);
         return (this.block_type == block2.block_type);
@@ -73,11 +76,13 @@ var Block= cc.Sprite.extend({
     },
 
     swap:function(block2){
+        console.log("SWAPPED");
         //Swaps the blocks
         var temp = this.block_type;
         this.block_type = block2.block_type;
         block2.block_type = temp;
 
+        // If no match, then return the blocks to where they originally were.
         if (!(this.check_matches()))
         {
             temp = this.block_type;
@@ -90,7 +95,7 @@ var Block= cc.Sprite.extend({
         this.board.getCoord(this.row, this.col);
 
     },
-    check_matches:function()
+    check_matches:function(block2)
     {
         //Check for all possible matches
         var counter_up = 1;
@@ -108,34 +113,28 @@ var Block= cc.Sprite.extend({
             counter_down++;
         var up_down = counter_up + counter_down - 1;
         var left_right = counter_left + counter_right - 1;
-
+        console.log("up: " + counter_up + " down " + counter_down + " left: " + counter_left + " right " + counter_right);
         if (up_down > 2 && left_right > 2)
         {
-            //Most likely going to be handled somewhere else.
-            //Scoring
+
 
             var multiplier = up_down + left_right - 1;
             //update total score
-            SCORE[6] += 100 * (multiplier - 2) * (multiplier - 2);
-            SCORE[this.block_type] += 100 * (multiplier - 2) * (multiplier - 2);
-            ScoreLayer.updateScore(this.block_type);
+            scoreLayer.updateScore(this.block_type, multiplier);
             //Deleting
 
-            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++)
+            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
                 this.board.delete(i,this.row);
-            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
-                this.board.delete(this.col,i);
-
-            //Dropping Down
-            for (i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
+            }
+            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
+                this.board.delete(this.col, i);
+            }
+            for (i=this.col-counter_left+1; i<this.col-counter_right-1; i++){
                 this.board.dropDown(i,this.row);
-            for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
-                this.board.dropDown(this.col,i);
-
-            //Verify that there are moves left.
-            if (!(board.prep_check_moves()))
-                game_over();
-
+            }
+            for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
+                this.board.dropDown(this.col, i);
+            }
             return true;
         }
 
@@ -144,33 +143,24 @@ var Block= cc.Sprite.extend({
             //Scoring
             var multiplier = up_down - 1;
             //update total score
-            SCORE[6] += 100 * (multiplier - 2) * (multiplier - 2);
-            SCORE[this.block_type] += 100 * (multiplier - 2) * (multiplier - 2);
-            ScoreLayer.updateScore(this.block_type);
+            scoreLayer.updateScore(this.block_type, multiplier);
 
-            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++);
+
+            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++){
                 this.board.delete(this.col,i);
-
-
+            }
             //Dropping Down
-            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++)
-                this.board.dropDown(this.col,i);
-
-            //Verify that there are moves left.
-            if (!(board.prep_check_moves()))
-                game_over();
-
-            return true;
+            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
+                this.board.dropDown(this.col, i);
+            }
+            return true
         }
 
         else if (left_right > 2 && up_down < 3)
         {
             //Scoring
             var multiplier = left_right - 1;
-            //update total score
-            SCORE[6] += 100 * (multiplier - 2) * (multiplier - 2);
-            SCORE[this.block_type] += 100 * (multiplier - 2) * (multiplier - 2);
-            ScoreLayer.updateScore(this.block_type);
+            scoreLayer.updateScore(this.block_type, multiplier);
 
 
             for (var i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
@@ -178,11 +168,7 @@ var Block= cc.Sprite.extend({
                 this.board.delete(i,this.row);
                 this.board.dropDown(i,this.row);
             }
-
-            //Verify that there are moves left
-            if (!(board.prep_check_moves()))
-                game_over();
-            return true;
+            return true
         }
         else
         {
@@ -200,7 +186,7 @@ var Block= cc.Sprite.extend({
         this.board.lock();
         this.locking = true
         var sequence =  new cc.Sequence(new cc.MoveTo(1,dest),new cc.callFunc(function(a){
-            console.log(a);
+            //console.log(a);
             a.board.unlock();
             a.locking = false;
         }));
@@ -211,8 +197,8 @@ var Block= cc.Sprite.extend({
     moveDown:function(){
         this.row -= 1;
         var dest = this.board.getCoord(this.col,this.row);
-       //console.log(dest);
-        //console.log("Row: " + this.row + " col: " + this.col);
+        console.log(dest);
+        console.log("Row: " + this.row + " col: " + this.col);
         //this.moveTo({x:100,y:100});
         this.moveTo(dest)
         //var move = new cc.MoveTo(1,dest);
@@ -225,7 +211,7 @@ var Block= cc.Sprite.extend({
 
 
     //Call function to check possible matches on board.
-    are_there_moves:function()
+    are_there_moves:function(block2)
     {
         //Check for all possible matches
         var counter_up = 1;

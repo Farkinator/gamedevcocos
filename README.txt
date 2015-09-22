@@ -1,39 +1,25 @@
-Mark Seddon
-	* Run around collecting teleprompter cards, avoid the bad things
-		- top-down
-		- set in the middle east
-		- dodge IEDs, stray bullets
-	* Running around terring down posters for other politicians
-		- 
-	* Political campaign simulator but more exciting
-	* TCG
-		- point is to trade cards that represent pieces of story, and you're trying
-		to create before the other players get there (Think pit or cash)
+Mark Seddon]
 	* Match-3 where you match up news stories
 		- the types of news stories give different bonuses and powers
 		- spin on a match maybe?
-		- something affected by gravity as opposed to being stacked on top of each other
-			* a block that always drops to the bottom
-				- Matching gravity box that falls to the bottom resets your problem
-				- spawn like a normal block, but fall to the bottom through other blocks
-
-
-
-Things that need to get done:
-	* blocks (5/6)
-	* GUI 
-	* controls: click one, click the other, they switch.
-	* 2-d array 
-	* animations for blocks falling (programmatic)
-	* animations for rotating (programmatic)
-	* Start menu, high scores, pause screen
-	* 
-	- the higher the score, the better story you get?
-
-IDEAS:
-	* Don't like games that are entirely time-based
-		- timers seem like a last resort to make a puzzle game hard
-	* Score thresholds for rotating the board?
-		- special block that rotates the board?
-	* row shifting
+]
+		
+=====================================================9/20 UPDATE=============================================
+Things needed: 
+	-ALL ART ASSETS. (including a new block, that, when matched, rotates the board.)
 	
+	Code:
+	-A block that, when matched, rotates the board
+	-A block queue in the board, so specific blocks can be added under specific circumstances.
+	-A rotation queue on board, so if there are multiple rotations in one frame it will behave correctly.
+	-Four in a row matches should create a special block:
+	-A block that, when four are put in the middle, will wipe the board and drastically increase your score. (or does someting else exciting... playtesting required)
+	-user input on the blocks. There is already a function to do that, but it doesn't seem to do anything. 
+	-Blocks need to remove themselves visually when they are deleted off the board. Perhaps they should do an animation as well.
+	-Blocks need to always delete themselves when they are matched. 
+	-A game over screen. This should display score, a story, and let you play again. Possibly add high scores.
+	-Code that plays sound effects when something happens that should make a sound.
+	
+	Sound/Writing
+	-Stories. 
+	-Sounds.
