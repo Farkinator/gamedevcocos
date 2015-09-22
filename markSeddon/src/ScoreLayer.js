@@ -16,19 +16,19 @@ var ScoreLayer = cc.Layer.extend({
         this.blocks = [];
         //This is going to hold all the other score labels.
         this.indivscorelabels = [];
-        this.totalscore = new cc.LabelTTF("Total Score: " + SCORE[6], "Times New Roman", 30);
+        this.totalscore = new cc.LabelTTF("Total Score: " + SCORE[6], "Times New Roman", 35);
         this.totalscore.setColor(cc.color(0,0,0));//black color
-        this.totalscore.setPosition(cc.p(850, winsize.height - 20));
+        this.totalscore.setPosition(cc.p(850, winsize.height - 80));
         this.addChild(this.totalscore);
         for(var i = 0; i < 6; i++){
             // Display the block that each score represents.
             this.blocks[i] = new cc.Sprite.create(res.blocks[i]);
-            this.blocks[i].setPosition(cc.p(840, winsize.height - 120 - 80 * i));
+            this.blocks[i].setPosition(cc.p(800, winsize.height - 200 - 80 * i));
             this.addChild(this.blocks[i]);
             // Create the labels for every score.
             this.indivscorelabels[i] = new cc.LabelTTF(" " + SCORE[i], "Times New Roman", 30);
             this.indivscorelabels[i].setColor(cc.color(0,0,0));
-            this.indivscorelabels[i].setPosition(cc.p(900, winsize.height - 120 - 80*i));
+            this.indivscorelabels[i].setPosition(cc.p(900, winsize.height - 200 - 80*i));
             this.addChild(this.indivscorelabels[i]);
         }
 
