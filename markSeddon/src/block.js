@@ -160,6 +160,13 @@ var Block= cc.Sprite.extend({
                 this.board.unlock();
                 this.board.dropDown(this.col, i);
             }
+
+            console.log(this.board.prep_check_moves());
+            if (!(this.board.prep_check_moves()))
+            {
+                console.log("GAME OVER");
+                //game_over();
+            }
             return true;
         }
 
@@ -191,6 +198,13 @@ var Block= cc.Sprite.extend({
             for (var i=this.row-counter_down+1; i<this.row+counter_up; i++) {
                 this.board.unlock();
                 this.board.dropDown(this.col, i);
+            }
+
+            console.log(this.board.prep_check_moves());
+            if (!(this.board.prep_check_moves()))
+            {
+                console.log("GAME OVER");
+                //game_over();
             }
             return true
         }
@@ -236,11 +250,24 @@ var Block= cc.Sprite.extend({
             //    this.board.delete(i,this.row);
             //    this.board.dropDown(i,this.row);
             //}
+
+            console.log(this.board.prep_check_moves());
+            if (!(this.board.prep_check_moves()))
+            {
+                console.log("GAME OVER");
+                //game_over();
+            }
             return true
         }
         else
         {
             //console.log("no match");
+            console.log(this.board.prep_check_moves());
+            if (!(this.board.prep_check_moves()))
+            {
+                console.log("GAME OVER");
+                //game_over();
+            }
             return false;
         }
     },
@@ -300,7 +327,7 @@ var Block= cc.Sprite.extend({
 
 
     //Call function to check possible matches on board.
-    are_there_moves:function(block2)
+    are_there_moves:function(orig_block)
     {
         //Check for all possible matches
         var counter_up = 1;
@@ -313,23 +340,23 @@ var Block= cc.Sprite.extend({
             //console.log("while1");
             //console.log(this.col);
             //console.log(counter_left);
-            if (this.match(this.col-counter_left, this.row))
+            if (orig_block.match(this.col-counter_left, this.row))
                 counter_left++;
             else
                 break;
         }
-        while (this.row+counter_up <= 7) //Check up
+        while (this.row+counter_up <= (this.board.arr_size-1)) //Check up
         {
             //console.log("while2");
-            if (this.match(this.col, this.row+counter_up))
+            if (orig_block.match(this.col, this.row+counter_up))
                 counter_up++;
             else
                 break;
         }
-        while (this.col+counter_right <= 7) //Check right
+        while (this.col+counter_right <= (this.board.arr_size-1)) //Check right
         {
             //console.log("while3");
-            if (this.match(this.col+counter_right, this.row))
+            if (orig_block.match(this.col+counter_right, this.row))
                 counter_right++;
             else
                 break;
@@ -337,7 +364,7 @@ var Block= cc.Sprite.extend({
         while (this.row-counter_down >= 0) //Check down
         {
             //console.log("while4");
-            if (this.match(this.col, this.row-counter_down))
+            if (orig_block.match(this.col, this.row-counter_down))
                 counter_down++;
             else
                 break;
