@@ -119,14 +119,16 @@ var Block= cc.Sprite.extend({
 
             scoreLayer.updateScore(this.block_type, 3);
             //Deleting
-
+            //Delete from left to right
             for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
                 this.board.delete(i,this.row);
             }
+            //Delete from top to bottom
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
                 this.board.delete(this.col, i);
             }
             for (var i=this.col-counter_left+1; i<this.col-counter_right-1; i++){
+                console.log("This should be happening when a horizontal match occurs");
                 this.board.dropDown(i,this.row);
             }
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
@@ -138,10 +140,9 @@ var Block= cc.Sprite.extend({
         else if (up_down > 2/* && left_right < 3*/)
         {
             //Scoring
-            var multiplier = up_down - 1;
+            var multiplier = up_down;
+            console.log("MULTIPLIER IS:"+multiplier);
             //update total score
-            console.log("BLOCK TYPE IS:" + this.block_type);
-
             scoreLayer.updateScore(this.block_type, 3);
 
 
@@ -157,26 +158,29 @@ var Block= cc.Sprite.extend({
 
         else if (left_right > 2/* && up_down < 3*/)
         {
-            console.log("leftright match")
+            console.log("leftright match, blocktype: "+ this.block_type);
+            console.log("at position: " + this.row + ", " +this.col);
             //Scoring
             var multiplier = left_right - 1;
-            console.log("BLOCK TYPE IS:" + this.block_type);
+            console.log("MULTIPLIER IS:" + multiplier);
             scoreLayer.updateScore(this.block_type, 3);
 
+            console.log(counter_left);
 
-
-            //for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
-            //    this.board.delete(i,this.row);
-            //}
-            //for (var i=this.col-counter_left+1; i<this.col-counter_right-1; i++){
-            //    this.board.dropDown(i,this.row);
-            //}
-
-            for (var i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
-            {
+            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
                 this.board.delete(i,this.row);
+            }
+            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
+                console.log("This should be happening when a horizontal match occurs (only horiz)");
+
                 this.board.dropDown(i,this.row);
             }
+            //
+            //for (var i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
+            //{
+            //    this.board.delete(i,this.row);
+            //    this.board.dropDown(i,this.row);
+            //}
             return true
         }
         else
