@@ -4,6 +4,7 @@ var Board = cc.Sprite.extend({
     ctor:function() {
         this._super(res.board_png);
         BOARD = this;
+        this.click_queue = null;
         this.arr_size = 8;
         this.block_size = 50; //how big the blocks are (diameter or width/height) on the longest dimension.
         this.block_offset = 5; //how much space is in between blocks in the board
@@ -17,6 +18,7 @@ var Board = cc.Sprite.extend({
         this.instantiate();
     },
         _getCoord:function(x,y) {
+            //Helper funcition for getCoord. Don't call this.
             var out = {x:0,y:0};
             out.x = this.block_boarder + this.block_size * (x + .5) + (this.block_offset) * (x-1);
             out.y = this.block_boarder + this.block_size * (y + .5) + (this.block_offset) * (y-1);
@@ -27,6 +29,7 @@ var Board = cc.Sprite.extend({
             //Returns the pixel coordinates for the given array coordinates on the board. This is LOCAL COORDINATES
             //meaning the value should only be used by children of the board (or be converted to global coordinates
             //before being used)
+            //Works when the board is rotated.
             //console.log("X: " + x + " Y: " + y);
 
             if(this.rotation == 0){
@@ -49,6 +52,11 @@ var Board = cc.Sprite.extend({
         //This function will clear arr if needed, and then fill it with blocks. Call it whenever you need to refresh the
         //gameboard (including at the beginning of the game)
         console.log("INSTANTIATE THIS");
+        if(this.arr[0] != null && this.arr[0][0] != null){
+            this.boardIterate(function(block){
+                block.board.delete(block.col,block.row);
+            });
+        }
         this.arr = [];
         for (var i = 0; i < this.arr_size; i++) {
             this.arr.push([]);
@@ -60,9 +68,41 @@ var Board = cc.Sprite.extend({
             this.dropDown(i,0);
         }
         //****************************************
-        if (!(this.prep_check_moves()))
+        if (!(this.prep_check_moves())){
+            console.log("no moves - rebuilding");
             this.instantiate();
+        }
         //****************************************
+    },
+    click:function(x,y){
+        //notifies the board that the block at array coordinates x y is clicked.
+        //console.log(x + ', ' + y + " clicked");
+        if(this.click_queue == null){
+            this.click_queue = this.arr[x][y];
+        }else{
+            if(this.click_queue.adjacent(this.arr[x][y])){
+                this.click_queue.swap(this.arr[x][y]);
+                this.click_queue = null;
+            }else{
+                this.click_queue = this.arr[x][y];
+            }
+        }
+    },
+    swap:function(x1,y1,x2,y2){
+        console.log(x1 + "," + y1 + ":" + x2 + "," + y2);
+        if(!this.arr[x1][y1].adjacent(this.arr[x2][y2])){
+            console.log("warning - swapping two blocks that are not adjacent");
+        }
+        var block1 = this.arr[x1][y1];
+        var block2 = this.arr[x2][y2];
+        block1.moveTo(this.getCoord(x2,y2));
+        block2.moveTo(this.getCoord(x1,y1));
+        block1.row = y2;
+        block1.col = x2;
+        block2.row = y1;
+        block2.col = x1;
+        this.arr[x2][y2] = block1;
+        this.arr[x1][y1] = block2;
     },
 
     prep_check_moves:function()
@@ -126,6 +166,7 @@ var Board = cc.Sprite.extend({
                 if(this.arr[x][y+1] == null){
                     //If the square above is empty too, it needs to not be empty before anything else happens.
                     this.dropDown(x,y+1);
+
                 }else{
                     //Otherwise bring it down here, and then recursively drop everything above it.
                     var moving = this.arr[x][y+1];
@@ -141,6 +182,7 @@ var Board = cc.Sprite.extend({
                 }
             }
         }
+        this.arr[x][y].check_matches();
     },
     lock:function(){
         //Locks the board, preventing it from accepting user input until unlock is called an equal number of times.
@@ -232,7 +274,10 @@ var Board = cc.Sprite.extend({
     delete:function(x,y){
         //Makes x,y null. Call dropDown() on this location soon after calling this function, and also visually delete
         //the block.
+        console.trace();
+        this.arr[x][y].removeFromParentAndCleanup();
         this.arr[x][y] = null;
+
     }
     //NOTE: blocks should do the switching.
 });
