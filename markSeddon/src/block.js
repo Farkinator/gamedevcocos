@@ -115,7 +115,7 @@ var Block= cc.Sprite.extend({
 
             var multiplier = up_down + left_right - 1;
             //update total score
-            scoreLayer.updateScore(this.block_type, multiplier);
+            //scoreLayer.updateScore(this.block_type, multiplier);
             //Deleting
 
             for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
@@ -138,7 +138,7 @@ var Block= cc.Sprite.extend({
             //Scoring
             var multiplier = up_down - 1;
             //update total score
-            scoreLayer.updateScore(this.block_type, multiplier);
+            //scoreLayer.updateScore(this.block_type, multiplier);
 
 
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++){
@@ -156,7 +156,7 @@ var Block= cc.Sprite.extend({
             console.log("leftright match")
             //Scoring
             var multiplier = left_right - 1;
-            scoreLayer.updateScore(this.block_type, multiplier);
+            //scoreLayer.updateScore(this.block_type, multiplier);
 
 
 
@@ -176,7 +176,6 @@ var Block= cc.Sprite.extend({
         }
         else
         {
-<<<<<<< HEAD
             //console.log("no match");
             return false;
         }
@@ -188,12 +187,6 @@ var Block= cc.Sprite.extend({
         }
         return false;
     },
-=======
-            return false;
-        }
-    },
-
->>>>>>> 8a31f272fd7c5fdfd62911680c28a485a1d0902b
     moveTo:function(dest){
         this.stopAllActions();
         if(this.locking){
