@@ -115,7 +115,9 @@ var Block= cc.Sprite.extend({
 
             var multiplier = up_down + left_right - 1;
             //update total score
-            //scoreLayer.updateScore(this.block_type, multiplier);
+            console.log("MULTIPLIER IS:" + multiplier);
+
+            scoreLayer.updateScore(this.block_type, 3);
             //Deleting
 
             for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
@@ -138,7 +140,9 @@ var Block= cc.Sprite.extend({
             //Scoring
             var multiplier = up_down - 1;
             //update total score
-            //scoreLayer.updateScore(this.block_type, multiplier);
+            console.log("BLOCK TYPE IS:" + this.block_type);
+
+            scoreLayer.updateScore(this.block_type, 3);
 
 
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++){
@@ -156,7 +160,8 @@ var Block= cc.Sprite.extend({
             console.log("leftright match")
             //Scoring
             var multiplier = left_right - 1;
-            //scoreLayer.updateScore(this.block_type, multiplier);
+            console.log("BLOCK TYPE IS:" + this.block_type);
+            scoreLayer.updateScore(this.block_type, 3);
 
 
 
