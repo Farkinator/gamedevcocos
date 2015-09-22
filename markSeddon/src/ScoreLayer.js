@@ -17,7 +17,7 @@ var ScoreLayer = cc.Layer.extend({
         this.blocks = [];
         //This is going to hold all the other score labels.
         this.indivscorelabels = [];
-        for(var i = 0; i < 6; i++){
+        for(var i = 0; i < 5; i++){
             // Display the block that each score represents.
             this.blocks[i] = new cc.Sprite.create(res.blocks[i]);
             this.blocks[i].setPosition(cc.p(800, winsize.height - 80 - 80 * i));

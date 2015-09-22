@@ -309,5 +309,16 @@ var Block= cc.Sprite.extend({
         var up_down = counter_up + counter_down - 1;
         var left_right = counter_left + counter_right - 1;
         return (up_down > 2 || left_right > 2);
+    },
+    //Adds a faint aura to a block that the player has selected. Takes in a boolean
+    // TRUE : This block has been selected. Add the glow png. FALSE: this block is being deselected. remove the glow png.
+    selected:function(onoff){
+        if(onoff == true){
+            glow = new cc.Sprite.create(res.select_png);
+            glow.setPosition(cc.p(33, 33));
+            this.addChild(glow);
+        } else if (onoff == false){
+            glow.removeFromParent(true);
+        }
     }
 });
