@@ -124,7 +124,7 @@ var Block= cc.Sprite.extend({
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
                 this.board.delete(this.col, i);
             }
-            for (var i=this.col-counter_left+1; i<this.col-counter_right-1; i++){
+            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
                 this.board.dropDown(i,this.row);
             }
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
@@ -159,19 +159,23 @@ var Block= cc.Sprite.extend({
             //scoreLayer.updateScore(this.block_type, multiplier);
 
 
-
-            //for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
-            //    this.board.delete(i,this.row);
-            //}
-            //for (var i=this.col-counter_left+1; i<this.col-counter_right-1; i++){
-            //    this.board.dropDown(i,this.row);
-            //}
-
-            for (var i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
-            {
+            console.log(this.col-counter_left+1 + " to " + this.col+counter_right-1);
+            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
+                console.log("deleting " + i);
                 this.board.delete(i,this.row);
+            }
+
+            console.log(this.col-counter_left+1 + " to " + this.col+counter_right-1);
+            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
+                console.log("dropping " + i);
                 this.board.dropDown(i,this.row);
             }
+
+            //for (var i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
+            //{
+            //    this.board.delete(i,this.row);
+            //    this.board.dropDown(i,this.row);
+            //}
             return true
         }
         else

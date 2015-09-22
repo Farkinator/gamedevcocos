@@ -68,10 +68,10 @@ var Board = cc.Sprite.extend({
             this.dropDown(i,0);
         }
         //****************************************
-        if (!(this.prep_check_moves())){
-            console.log("no moves - rebuilding");
-            this.instantiate();
-        }
+        //if (!(this.prep_check_moves())){
+        //    console.log("no moves - rebuilding");
+        //    this.instantiate();
+        //}
         //****************************************
     },
     click:function(x,y){
@@ -182,7 +182,7 @@ var Board = cc.Sprite.extend({
                 }
             }
         }
-        this.arr[x][y].check_matches();
+        //this.arr[x][y].check_matches();
     },
     lock:function(){
         //Locks the board, preventing it from accepting user input until unlock is called an equal number of times.
@@ -274,7 +274,7 @@ var Board = cc.Sprite.extend({
     delete:function(x,y){
         //Makes x,y null. Call dropDown() on this location soon after calling this function, and also visually delete
         //the block.
-        console.trace();
+        //console.trace();
         this.arr[x][y].removeFromParentAndCleanup();
         this.arr[x][y] = null;
 
