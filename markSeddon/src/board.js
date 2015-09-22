@@ -79,18 +79,19 @@ var Board = cc.Sprite.extend({
     click:function(x,y){
         //notifies the board that the block at array coordinates x y is clicked.
         //console.log(x + ', ' + y + " clicked");
+
         if(this.click_queue == null){
             this.click_queue = this.arr[x][y];
+            this.click_queue.selected(true);
             //Indicate to the player that this is the block that they are preparing to switch.
-            this.arr[x][y].selected(true);
         }else{
-            //De-select the block, then check if swappable.
             this.click_queue.selected(false);
             if(this.click_queue.adjacent(this.arr[x][y])){
                 this.click_queue.swap(this.arr[x][y]);
                 this.click_queue = null;
             }else{
                 this.click_queue = this.arr[x][y];
+                this.click_queue.selected(true);
             }
 
         }

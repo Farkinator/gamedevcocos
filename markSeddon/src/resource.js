@@ -14,7 +14,7 @@ var res = {
     block5_png: "res/BlockTech.png",
     block6_png: "res/BlockRotate.png",
 
-    select_png: "res/selection_plac.png"
+    select_png: "res/Selection.png"
 };
 
 var g_resources = [
