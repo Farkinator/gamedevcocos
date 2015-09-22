@@ -12,7 +12,9 @@ var res = {
     block3_png: "res/BlockWorld.png",
     block4_png: "res/BlockSports.png",
     block5_png: "res/BlockTech.png",
-    block6_png: "res/BlockRotate.png"
+    block6_png: "res/BlockRotate.png",
+
+    select_png: "res/selection_plac.png"
 };
 
 var g_resources = [
@@ -27,7 +29,9 @@ var g_resources = [
     res.block3_png,
     res.block4_png,
     res.block5_png,
-    res.block6_png
+    res.block6_png,
+    res.select_png
+
 ];
 res.blocks = [res.block1_png,res.block2_png,res.block3_png,res.block4_png,res.block5_png,res.block6_png];
 
