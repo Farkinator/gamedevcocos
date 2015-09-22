@@ -33,7 +33,8 @@ var MainMenuLayer = cc.Layer.extend({
 
     onPlay : function(){
         cc.log("==onplay clicked");
-        cc.director.runScene(new GameScene());
+        //cc.director.runScene(new GameScene());
+        cc.director.runScene(new GameOverScene([1200, 100, 100, 300, 800, 500, 4000]));
     }
 });
 var MainMenuScene = cc.Scene.extend({
