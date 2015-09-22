@@ -166,7 +166,17 @@ var Board = cc.Sprite.extend({
             if(y == this.arr_size - 1){
                 //console.log("Top row!");
                 //if this is the top row...
+                //if(this.blockQueue.length > 0){
+                //    temp = this.blockQueue.pop();
+                //    temp.col = y;
+                //    temp.row = x;
+                //}
                 var temp = new Block(x,y,this);
+                var tpos = this.getCoord(x,y+1);
+                temp.x = tpos.x;
+                temp.y = tpos.y;
+                //temp.y += this.block_size;
+                temp.moveTo(this.getCoord(x,y));
                 this.arr[x][y] = temp;
                 this.addChild(temp);
             }else{
@@ -276,10 +286,10 @@ var Board = cc.Sprite.extend({
         this.lock();//The player should not be able to make moves while the board is rotating.
         this.arrayRotate();//This rotates the array.
         this.boardIterate(function(block){
-            var rotate_action = new cc.RotateBy(1,-90);
+            var rotate_action = new cc.RotateBy(.5,-90);
             block.runAction(rotate_action);
         });
-        var sequence =  new cc.Sequence(new cc.RotateBy(1,90),new cc.callFunc(function(a){
+        var sequence =  new cc.Sequence(new cc.RotateBy(.5,90),new cc.callFunc(function(a){
             a.unlock();
             if(a.rotation >= 360){
                 a.rotation -= 360;
