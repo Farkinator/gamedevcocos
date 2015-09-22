@@ -8,6 +8,7 @@ var Block= cc.Sprite.extend({
             console.log("ERROR - BOARD IS UNDEFINED.");
         }
         //Initialization
+
         var type = this.set_block();
         this._super(res.blocks[type]);
         //console.log("row: " + in_row + " col: " + in_col);
@@ -110,11 +111,11 @@ var Block= cc.Sprite.extend({
         console.log("up: " + counter_up + " down " + counter_down + " left: " + counter_left + " right " + counter_right);
         if (up_down > 2 && left_right > 2)
         {
-            //Most likely going to be handled somewhere else.
-            //Scoring
-            var multiplier = up_down + left_right - 1;
-            SCORE += 100 * (multiplier - 2) * (multiplier - 2);
 
+
+            var multiplier = up_down + left_right - 1;
+            //update total score
+            scoreLayer.updateScore(this.block_type, multiplier);
             //Deleting
 
             for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
@@ -136,12 +137,13 @@ var Block= cc.Sprite.extend({
         {
             //Scoring
             var multiplier = up_down - 1;
-            SCORE += 100 * (multiplier - 2) * (multiplier - 2);
+            //update total score
+            scoreLayer.updateScore(this.block_type, multiplier);
+
 
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++){
                 this.board.delete(this.col,i);
             }
-
             //Dropping Down
             for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
                 this.board.dropDown(this.col, i);
@@ -154,7 +156,8 @@ var Block= cc.Sprite.extend({
             console.log("leftright match")
             //Scoring
             var multiplier = left_right - 1;
-            SCORE += 100 * (multiplier - 2) * (multiplier - 2);
+            scoreLayer.updateScore(this.block_type, multiplier);
+
 
 
             //for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
@@ -173,6 +176,7 @@ var Block= cc.Sprite.extend({
         }
         else
         {
+<<<<<<< HEAD
             //console.log("no match");
             return false;
         }
@@ -184,6 +188,12 @@ var Block= cc.Sprite.extend({
         }
         return false;
     },
+=======
+            return false;
+        }
+    },
+
+>>>>>>> 8a31f272fd7c5fdfd62911680c28a485a1d0902b
     moveTo:function(dest){
         this.stopAllActions();
         if(this.locking){

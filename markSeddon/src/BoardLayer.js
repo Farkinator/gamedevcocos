@@ -17,7 +17,7 @@ var BoardLayer = cc.Layer.extend({
         this._super();
         //Instantiate the board.
         var board = new Board();
-        board.setPosition(cc.p(600, 600));
+        board.setPosition(cc.p(400, 400));
         this.addChild(board);
     }
 

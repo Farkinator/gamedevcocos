@@ -18,6 +18,8 @@
         "src/BoardLayer.js",
         "src/ScoreLayer.js",
         "src/board.js",
-        "src/block.js"
+        "src/block.js",
+        "src/GameOverScene.js",
+        "src/EndLayer.js"
     ]
 }
