@@ -70,10 +70,10 @@ var Board = cc.Sprite.extend({
             this.dropDown(i,0);
         }
         //****************************************
-        if (!(this.prep_check_moves())){
-            console.log("no moves - rebuilding");
-            this.instantiate();
-        }
+        //if (!(this.prep_check_moves())){
+        //    console.log("no moves - rebuilding");
+        //    this.instantiate();
+        //}
         //****************************************
     },
     click:function(x,y){
@@ -195,20 +195,25 @@ var Board = cc.Sprite.extend({
         //Locks the board, preventing it from accepting user input until unlock is called an equal number of times.
         //console.log("lock function used.");
         this.locked++;
+        console.log("locked(inlock)");
     },
 
     unlock:function(){
         //Unlocks the board once, making it accept input again unless something else is also locking it.
         //console.log("unlock function used.");
         this.locked--;
-        if(this.locked == 0 && this.num_rotates_queued > 1){
+        console.log("unlocked(inunlock)");
+        if(this.locked == 0 && this.num_rotates_queued > 0){
             this.num_rotates_queued--;
+            //console.log(this);
+            console.log(this.arr);
             this.rotate();
         }
     },
 
 
     arrayRotate:function(){
+        console.log(this.arr);
         //Rotates the arr array. This should only be called by the local rotate() function!
         var temp = [];
         var arr = this.arr;
@@ -290,6 +295,11 @@ var Board = cc.Sprite.extend({
         if(this.arr[x][y] == null){
             console.warn("Warning: delete called on a null block.");
             return;
+        }
+        if(this.arr[x][y].locking){
+            console.log("Locking block is getting deleted. Unlocking.");
+            this.unlock();
+            this.arr[x][y].locking = false;
         }
         //console.trace();
         this.arr[x][y].removeFromParent(true);
