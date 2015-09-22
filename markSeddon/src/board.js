@@ -5,7 +5,7 @@ var Board = cc.Sprite.extend({
         this._super(res.board_png);
         BOARD = this;
         this.click_queue = null;
-        this.arr_size = 8;
+        this.arr_size = 4;
         this.num_rotates_queued = 0;
         this.blockQueue = [];
         this.block_size = 64; //how big the blocks are (diameter or width/height) on the longest dimension.
@@ -70,10 +70,10 @@ var Board = cc.Sprite.extend({
             this.dropDown(i,0);
         }
         //****************************************
-        //if (!(this.prep_check_moves())){
-        //    console.log("no moves - rebuilding");
-        //    this.instantiate();
-        //}
+        if (!(this.prep_check_moves())){
+            console.log("no moves - rebuilding");
+            this.instantiate();
+        }
         //****************************************
     },
     click:function(x,y){
@@ -111,40 +111,35 @@ var Board = cc.Sprite.extend({
     {
         for (var i = 0; i < this.arr_size; i++)
         {
-            var bool;
             for (var j = 0; j < this.arr_size; j++)
             {
-                if (i < 7)
+                if (i < (this.arr_size-1))
                 {
                     var n1 = i + 1;
-                    bool = (this.arr[n1][j]).are_there_moves();
-                    if (bool)
+                    if ((this.arr[n1][j]).are_there_moves(this.arr[i][j]))
                         return true;
                 }
                 if (i > 0)
                 {
                     var n2 = i - 1;
-                    bool = (this.arr[n2][j]).are_there_moves();
-                    if (bool)
+                    if ((this.arr[n2][j]).are_there_moves(this.arr[i][j]))
                         return true;
                 }
-                if (j < 7)
+                if (j < (this.arr_size-1))
                 {
                     var n3 = j + 1;
-                    bool = (this.arr[i][n3]).are_there_moves();
-                    if (bool)
+                    if ((this.arr[i][n3]).are_there_moves(this.arr[i][j]))
                         return true;
                 }
-                if (j > 0)
+                if (j > (this.arr_size-1))
                 {
                     var n4 = j - 1;
-                    bool = (this.arr[i][n4]).are_there_moves();
-                    if (bool)
+                    if ((this.arr[i][n4]).are_there_moves(this.arr[i][j]))
                         return true;
                 }
             }
-            return false;
         }
+        return false;
     },
 
 
@@ -200,14 +195,14 @@ var Board = cc.Sprite.extend({
         //Locks the board, preventing it from accepting user input until unlock is called an equal number of times.
         //console.log("lock function used.");
         this.locked++;
-        console.log("locked(inlock)");
+        //console.log("locked(inlock)");
     },
 
     unlock:function(){
         //Unlocks the board once, making it accept input again unless something else is also locking it.
         //console.log("unlock function used.");
         this.locked--;
-        console.log("unlocked(inunlock)");
+        //console.log("unlocked(inunlock)");
         if(this.locked == 0 && this.num_rotates_queued > 0){
             this.num_rotates_queued--;
             //console.log(this);
