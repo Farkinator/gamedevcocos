@@ -41,7 +41,7 @@ var Block= cc.Sprite.extend({
         var target = event.getCurrentTarget();
         if(target.board.locked){
             console.log("Locked, click absorbed.");
-            //return false;
+            return false;
         }
 
         var locationInNode = target.convertToNodeSpace(touch.getLocation());
@@ -247,7 +247,7 @@ var Block= cc.Sprite.extend({
         //console.log(this);
         this.board.lock();
         this.locking = true;
-        var sequence =  new cc.Sequence(new cc.MoveTo(1,dest),new cc.callFunc(function(a){
+        var sequence =  new cc.Sequence(new cc.MoveTo(.5,dest),new cc.callFunc(function(a){
             //console.log(a);
             if(!a.check_matches()){
                 //a.soft_move();
