@@ -3,7 +3,7 @@
  */
 SpecialBlock = Block.extend({
     ctor:function(col,row,board){
-        this._super(col,row,board);
+        this._super(col,row,board,res.special_png);
         this.plainmatch = this.check_matches;
         this.specialSquares = [{x:3,y:3},{x:4,y:3},{x:3,y:4},{x:4,y:4}];
         cc.spriteFrameCache.addSpriteFrame (new cc.SpriteFrame (res.special_png),"special");
@@ -12,6 +12,7 @@ SpecialBlock = Block.extend({
 
         this.check_matches = function(){
             var match = true;
+            console.log("Check matches on a special block.");
             for(var i = 0; i < this.specialSquares.length; i++){
                 if(!this.match(this.specialSquares[i].x,this.specialSquares[i].y)){
                     match = false;

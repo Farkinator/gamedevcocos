@@ -53,7 +53,7 @@ var EndLayer = cc.Layer.extend({
         // Array that will hold sprites representing the score for each block.
         this.blocks = [];
         //Score breakdown of all the different subjects
-        for(var i = 0; i < 6; i++){
+        for(var i = 0; i < 5; i++){
             // Display the block that each score represents.
             this.blocks[i] = new cc.Sprite.create(res.blocks[i]);
             this.blocks[i].setPosition(cc.p(90 + i * 170, winsize.height - 650));

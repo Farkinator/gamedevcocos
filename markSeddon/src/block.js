@@ -3,19 +3,23 @@
  */
 
 var Block= cc.Sprite.extend({
-    ctor:function(in_col, in_row, in_board){
+    ctor:function(in_col, in_row, in_board,sprite){
         if(in_board == undefined){
             console.log("ERROR - BOARD IS UNDEFINED.");
         }
         //Initialization
-
-        var type = this.set_block();
-        this._super(res.blocks[type]);
+        if(sprite == undefined){
+            var type = this.set_block();
+            this._super(res.blocks[type]);
+            this.block_type = type;
+        }else{
+            this._super(sprite);
+            this.block_type = 999;
+        }
         //console.log("row: " + in_row + " col: " + in_col);
         this.row = in_row;
         this.col = in_col;
         this.board = in_board;
-        this.block_type = type;
         this.soft_move = function(){};
         this.rotation = 360 - this.board.rotation;
         //console.log(this);
@@ -116,7 +120,12 @@ var Block= cc.Sprite.extend({
         //console.log("up: " + counter_up + " down " + counter_down + " left: " + counter_left + " right " + counter_right);
         if (up_down > 2 && left_right > 2)
         {
-
+            if(left_right > 3){
+                this.board.blockQueue.push(new SpecialBlock(0,0,BOARD));
+            }
+            if(up_down > 3){
+                this.board.blockQueue.push(new SpecialBlock(0,0,BOARD));
+            }
 
             var multiplier = up_down + left_right - 1;
             //update total score
@@ -156,6 +165,9 @@ var Block= cc.Sprite.extend({
 
         else if (up_down > 2/* && left_right < 3*/)
         {
+            if(up_down > 3){
+                this.board.blockQueue.push(new SpecialBlock(0,0,BOARD));
+            }
             //Scoring
             var multiplier = up_down;
             //console.log("MULTIPLIER IS:"+multiplier);
@@ -185,6 +197,9 @@ var Block= cc.Sprite.extend({
 
         else if (left_right > 2/* && up_down < 3*/)
         {
+            if(left_right > 3){
+                this.board.blockQueue.push(new SpecialBlock(0,0,BOARD));
+            }
             //console.log("leftright match, blocktype: "+ this.block_type);
             //console.log("at position: " + this.row + ", " +this.col);
             //Scoring
@@ -330,5 +345,16 @@ var Block= cc.Sprite.extend({
         var up_down = counter_up + counter_down - 1;
         var left_right = counter_left + counter_right - 1;
         return (up_down > 2 || left_right > 2);
+    },
+    //Adds a faint aura to a block that the player has selected. Takes in a boolean
+    // TRUE : This block has been selected. Add the glow png. FALSE: this block is being deselected. remove the glow png.
+    selected:function(onoff){
+        if(onoff == true){
+            glow = new cc.Sprite.create(res.select_png);
+            glow.setPosition(cc.p(33, 33));
+            this.addChild(glow);
+        } else if (onoff == false){
+            glow.removeFromParent(true);
+        }
     }
 });

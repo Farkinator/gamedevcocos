@@ -81,13 +81,22 @@ var Board = cc.Sprite.extend({
         //console.log(x + ', ' + y + " clicked");
         if(this.click_queue == null){
             this.click_queue = this.arr[x][y];
+            //Indicate to the player that this is the block that they are preparing to switch.
+            this.arr[x][y].selected(true);
         }else{
+            if(this.click_queue == this.arr[x][y]){
+                this.click_queue = null;
+                return;
+            }
+            //De-select the block, then check if swappable.
+            this.click_queue.selected(false);
             if(this.click_queue.adjacent(this.arr[x][y])){
                 this.click_queue.swap(this.arr[x][y]);
                 this.click_queue = null;
             }else{
                 this.click_queue = this.arr[x][y];
             }
+
         }
     },
     swap:function(x1,y1,x2,y2){
@@ -143,8 +152,8 @@ var Board = cc.Sprite.extend({
                         return true;
                 }
             }
-            return false;
         }
+        return false;
     },
 
 
@@ -161,17 +170,19 @@ var Board = cc.Sprite.extend({
             if(y == this.arr_size - 1){
                 //console.log("Top row!");
                 //if this is the top row...
+                var temp;
                 if(this.blockQueue.length > 0){
                     temp = this.blockQueue.pop();
-                    temp.col = y;
-                    temp.row = x;
+                    temp.col = x;
+                    temp.row = y;
                 }else{
-                    var temp = new Block(x,y,this);
+                    temp = new Block(x,y,this);
                 }
                 var tpos = this.getCoord(x,y+1);
                 temp.x = tpos.x;
                 temp.y = tpos.y;
                 //temp.y += this.block_size;
+                console.log(this.getCoord(x,y));
                 temp.moveTo(this.getCoord(x,y));
                 this.arr[x][y] = temp;
                 this.addChild(temp);
@@ -201,18 +212,18 @@ var Board = cc.Sprite.extend({
         //Locks the board, preventing it from accepting user input until unlock is called an equal number of times.
         //console.log("lock function used.");
         this.locked++;
-        console.log("locked(inlock)");
+        //console.log("locked(inlock)");
     },
 
     unlock:function(){
         //Unlocks the board once, making it accept input again unless something else is also locking it.
         //console.log("unlock function used.");
         this.locked--;
-        console.log("unlocked(inunlock)");
+        //console.log("unlocked(inunlock)");
         if(this.locked == 0 && this.num_rotates_queued > 0){
             this.num_rotates_queued--;
             //console.log(this);
-            console.log(this.arr);
+            //console.log(this.arr);
             this.rotate();
         }
     },
