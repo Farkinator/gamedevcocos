@@ -1,11 +1,12 @@
 
-
+//FIX THE DOUBLE ROTATE BUG.
 var Board = cc.Sprite.extend({
     ctor:function() {
         this._super(res.board_png);
         BOARD = this;
         this.click_queue = null;
         this.arr_size = 8;
+        this.num_rotates_queued = 0;
         this.blockQueue = [];
         this.block_size = 64; //how big the blocks are (diameter or width/height) on the longest dimension.
         this.block_offset = 16; //how much space is in between blocks in the board
@@ -69,10 +70,10 @@ var Board = cc.Sprite.extend({
             this.dropDown(i,0);
         }
         //****************************************
-        //if (!(this.prep_check_moves())){
-        //    console.log("no moves - rebuilding");
-        //    this.instantiate();
-        //}
+        if (!(this.prep_check_moves())){
+            console.log("no moves - rebuilding");
+            this.instantiate();
+        }
         //****************************************
     },
     click:function(x,y){
@@ -195,6 +196,10 @@ var Board = cc.Sprite.extend({
         //Unlocks the board once, making it accept input again unless something else is also locking it.
         //console.log("unlock function used.");
         this.locked--;
+        if(this.locked == 0 && this.num_rotates_queued > 1){
+            this.num_rotates_queued--;
+            this.rotate();
+        }
     },
 
 
@@ -254,6 +259,8 @@ var Board = cc.Sprite.extend({
     rotate:function(){
         if(this.locked){
             console.log("Warning, board is rotating while locked.");
+            this.num_rotates_queued++;
+            return;
         }
         //This rotates the board counter-clockwise, both visually and internally.
         this.lock();//The player should not be able to make moves while the board is rotating.
@@ -275,7 +282,10 @@ var Board = cc.Sprite.extend({
     delete:function(x,y){
         //Makes x,y null. Call dropDown() on this location soon after calling this function, and also visually delete
         //the block.
-
+        if(this.arr[x][y] == null){
+            console.warn("Warning: delete called on a null block.");
+            return;
+        }
         //console.trace();
         this.arr[x][y].removeFromParentAndCleanup();
         this.arr[x][y] = null;

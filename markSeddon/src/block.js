@@ -17,6 +17,7 @@ var Block= cc.Sprite.extend({
         this.board = in_board;
         this.block_type = type;
         this.soft_move = function(){};
+        this.rotation = 360 - this.board.rotation;
         //console.log(this);
         this.action = null;
         this.locking = false;
