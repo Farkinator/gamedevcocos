@@ -119,9 +119,16 @@ var Block= cc.Sprite.extend({
 
             var multiplier = up_down + left_right - 1;
             //update total score
-            console.log("MULTIPLIER IS:" + multiplier);
 
-            scoreLayer.updateScore(this.block_type, 3);
+            console.log("MULTIPLIER IS:" + multiplier);
+            // Rotate block is block_type 5.
+            if(this.block_type == 5){
+                console.log("wut wut wut");
+                this.board.rotate();
+            } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
+                scoreLayer.updateScore(this.block_type, 3);
+
+            }
             //Deleting
             //Delete from left to right
             for (var i=this.col-counter_left+1; i<this.col+counter_right; i++){
@@ -146,8 +153,14 @@ var Block= cc.Sprite.extend({
             //Scoring
             var multiplier = up_down;
             console.log("MULTIPLIER IS:"+multiplier);
-            //update total score
-            scoreLayer.updateScore(this.block_type, 3);
+            // Rotate block is block_type 5.
+            if(this.block_type == 5){
+                console.log("wut wut wut");
+                this.board.rotate();
+            } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
+                scoreLayer.updateScore(this.block_type, 3);
+
+            }
 
 
             for (var i=this.row-counter_down+1; i<this.row+counter_up; i++){
@@ -167,7 +180,14 @@ var Block= cc.Sprite.extend({
             //Scoring
             var multiplier = left_right - 1;
             console.log("MULTIPLIER IS:" + multiplier);
-            scoreLayer.updateScore(this.block_type, 3);
+            // Rotate block is block_type 5.
+            if(this.block_type == 5){
+                console.log("wut wut wut");
+                this.board.rotate();
+            } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
+                scoreLayer.updateScore(this.block_type, 3);
+
+            }
 
             console.log(counter_left);
 
