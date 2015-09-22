@@ -118,19 +118,23 @@ var Block= cc.Sprite.extend({
 
             var multiplier = up_down + left_right - 1;
             //update total score
-            //scoreLayer.updateScore(this.block_type, multiplier);
-            //Deleting
+            console.log("MULTIPLIER IS:" + multiplier);
 
-            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
+            scoreLayer.updateScore(this.block_type, 3);
+            //Deleting
+            //Delete from left to right
+            for (var i=this.col-counter_left+1; i<this.col+counter_right; i++){
                 this.board.delete(i,this.row);
             }
-            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
+            //Delete from top to bottom
+            for (var i=this.row-counter_down+1; i<this.row+counter_up; i++) {
                 this.board.delete(this.col, i);
             }
-            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
+
+            for (var i=this.col-counter_left+1; i<this.col+counter_right; i++){
                 this.board.dropDown(i,this.row);
             }
-            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
+            for (var i=this.row-counter_down+1; i<this.row+counter_up; i++) {
                 this.board.dropDown(this.col, i);
             }
             return true;
@@ -139,16 +143,17 @@ var Block= cc.Sprite.extend({
         else if (up_down > 2/* && left_right < 3*/)
         {
             //Scoring
-            var multiplier = up_down - 1;
+            var multiplier = up_down;
+            console.log("MULTIPLIER IS:"+multiplier);
             //update total score
-            //scoreLayer.updateScore(this.block_type, multiplier);
+            scoreLayer.updateScore(this.block_type, 3);
 
 
-            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++){
+            for (var i=this.row-counter_down+1; i<this.row+counter_up; i++){
                 this.board.delete(this.col,i);
             }
             //Dropping Down
-            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
+            for (var i=this.row-counter_down+1; i<this.row+counter_up; i++) {
                 this.board.dropDown(this.col, i);
             }
             return true
@@ -156,20 +161,23 @@ var Block= cc.Sprite.extend({
 
         else if (left_right > 2/* && up_down < 3*/)
         {
-            console.log("leftright match")
+            console.log("leftright match, blocktype: "+ this.block_type);
+            console.log("at position: " + this.row + ", " +this.col);
             //Scoring
             var multiplier = left_right - 1;
-            //scoreLayer.updateScore(this.block_type, multiplier);
+            console.log("MULTIPLIER IS:" + multiplier);
+            scoreLayer.updateScore(this.block_type, 3);
 
+            console.log(counter_left);
 
             console.log(this.col-counter_left+1 + " to " + this.col+counter_right-1);
-            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
+            for (var i=this.col-counter_left+1; i<this.col+counter_right; i++){
                 console.log("deleting " + i);
                 this.board.delete(i,this.row);
             }
 
             console.log(this.col-counter_left+1 + " to " + this.col+counter_right-1);
-            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
+            for (var i=this.col-counter_left+1; i<this.col+counter_right; i++){
                 console.log("dropping " + i);
                 this.board.dropDown(i,this.row);
             }
