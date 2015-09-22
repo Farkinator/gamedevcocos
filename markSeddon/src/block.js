@@ -16,6 +16,7 @@ var Block= cc.Sprite.extend({
         this.col = in_col;
         this.board = in_board;
         this.block_type = type;
+        this.soft_move = function(){};
         //console.log(this);
         this.action = null;
         this.locking = false;
@@ -72,11 +73,13 @@ var Block= cc.Sprite.extend({
     swap:function(block2){
         console.log("SWAPPED");
         this.board.swap(this.col,this.row,block2.col,block2.row);
-        if (!(this.check_matches() || block2.check_matches()))
-        {
-            console.log("No match.")
-            //this.board.swap(this.col,this.row,block2.col,block2.row);
-        }
+        //this.soft
+        //if (!(this.check_matches() || block2.check_matches()))
+        //{
+        //
+        //    console.log("No match.")
+        //    //this.board.swap(this.col,this.row,block2.col,block2.row);
+        //}
     },
     moveDown:function(){
         this.board.getCoord(this.row, this.col);
@@ -204,6 +207,12 @@ var Block= cc.Sprite.extend({
             //console.log(a);
             a.board.unlock();
             a.locking = false;
+            if(!a.check_matches()){
+                //a.soft_move();
+                //a.soft_move = function(){};
+            //}else{
+                //a.soft_move = function(){};
+            }
         }));
         //var move =new cc.MoveTo(1,dest) ;
         //move.setTag(11);

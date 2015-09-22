@@ -6,6 +6,7 @@ var Board = cc.Sprite.extend({
         BOARD = this;
         this.click_queue = null;
         this.arr_size = 8;
+        this.blockQueue
         this.block_size = 64; //how big the blocks are (diameter or width/height) on the longest dimension.
         this.block_offset = 16; //how much space is in between blocks in the board
         this.block_boarder = 24; //how thick the edges of the board are.
