@@ -8,6 +8,7 @@ var Block= cc.Sprite.extend({
             console.log("ERROR - BOARD IS UNDEFINED.");
         }
         //Initialization
+
         var type = this.set_block();
         this._super(res.blocks[type]);
         //console.log("row: " + in_row + " col: " + in_col);
@@ -15,46 +16,43 @@ var Block= cc.Sprite.extend({
         this.col = in_col;
         this.board = in_board;
         this.block_type = type;
+        this.soft_move = function(){};
+        this.rotation = 360 - this.board.rotation;
         //console.log(this);
         this.action = null;
         this.locking = false;
         var position = this.board.getCoord(this.col,this.row);
         this.x = position.x;
         this.y = position.y;
-        //this.setSprite(res.blocks[this.block_type]);
 
-        //User input handler
-        var listener1 = cc.EventListener.create(
-            {
+        cc.eventManager.addListener (
+            cc.EventListener.create ({
                 event: cc.EventListener.TOUCH_ONE_BY_ONE,
                 swallowTouches: false,
-                onTouchBegan: function(touch, event)
-                {
-                    var target = event.getCurrentTarget();
-
-                    var locationInNode = target.convertToNodeSpace(touch.getLocation());
-                    var s = target.getContentSize();
-                    var rect = cc.rect(0,0,s.width,s.height);
-                    var out = cc.rectContainsPoint(rect,locationInNode);
-                    console.log(out);
-                    return cc.rectContainsPoint(rect,locationInNode);
-                },
-
-                onTouchMoved: function(touch,event)
-                {
-                    var target = event.getCurrentTarget();
-                    var delta = touch.getDelta();
-                    target.x += delta.x;
-                    target.y += delta.y;
-                },
-
-                onTouchEnded: function (touch,event)
-                {
-                    var target = event.getCurrentTarget();
-                }
-            });
+                onTouchBegan: this.onTouchBegan,
+                onTouchEnded: this.onTouchEnded
+            }),this);
     },
+    onTouchBegan: function(touch,event){
+        return true;
+    },
+    onTouchEnded: function (touch,event) {
 
+        var target = event.getCurrentTarget();
+        if(target.board.locked){
+            console.log("Locked, click absorbed.");
+            return false;
+        }
+
+        var locationInNode = target.convertToNodeSpace(touch.getLocation());
+        var s = target.getContentSize();
+        var rect = cc.rect(0,0,s.width,s.height);
+        var out = cc.rectContainsPoint(rect,locationInNode);
+        if(out){
+            target.board.click(target.col,target.row);
+        }
+        return true;
+    },
 
     //Methods
     match:function(x,y)
@@ -64,7 +62,7 @@ var Block= cc.Sprite.extend({
             return false;
         }
         //console.log(this);
-        //console.log(block2);
+        //.log(block2);
         return (this.block_type == block2.block_type);
     },
 
@@ -75,27 +73,18 @@ var Block= cc.Sprite.extend({
     },
 
     swap:function(block2){
-        console.log("SWAPPED");
-        //Swaps the blocks
-        var temp = this.block_type;
-        this.block_type = block2.block_type;
-        block2.block_type = temp;
-
-//<<<<<<< HEAD
-//        this.check_matches(block2);
-//=======
-        if (!(this.check_matches()))
-        {
-            temp = this.block_type;
-            this.block_type = block2.block_type;
-            block2.block_type = temp;
-        }
-//>>>>>>> c7aff5f4a6533dc6feae29646bebf2e1d87b2ec3
-
+        //console.log("SWAPPED");
+        this.board.swap(this.col,this.row,block2.col,block2.row);
+        //this.soft
+        //if (!(this.check_matches() || block2.check_matches()))
+        //{
+        //
+        //    console.log("No match.")
+        //    //this.board.swap(this.col,this.row,block2.col,block2.row);
+        //}
     },
     moveDown:function(){
         this.board.getCoord(this.row, this.col);
-
     },
     check_matches:function(block2)
     {
@@ -105,82 +94,147 @@ var Block= cc.Sprite.extend({
         var counter_right = 1;
         var counter_down = 1;
 
-        while (this.match(this.col-counter_left,this.row) && (this.col-counter_left >= 0)) //Check left
+        while (this.match(this.col-counter_left,this.row)/* && (this.col-counter_left >= 0)*/) { //Check left
             counter_left++;
-        while (this.match(this.col,this.row+counter_up) && (this.row+counter_up <= 8)) //Check up
+            //console.log("was left");
+        }
+        while (this.match(this.col,this.row+counter_up)/* && (this.row+counter_up < 8)*/) { //Check up
             counter_up++;
-        while (this.match(this.col+counter_right,this.row) && (this.col+counter_right <= 8)) //Check right
+            //console.log("was up");
+        }
+        while (this.match(this.col+counter_right,this.row)/* && (this.col+counter_right < 8)*/) { //Check right
             counter_right++;
-        while (this.match(this.col, this.row-counter_down) && (this.row-counter_down >= 0)) //Check down
+            //console.log("was right");
+        }
+        while (this.match(this.col, this.row-counter_down) /*&& (this.row-counter_down >= 0)*/) { //Check down
             counter_down++;
+            //console.log("was down");
+        }
         var up_down = counter_up + counter_down - 1;
         var left_right = counter_left + counter_right - 1;
-        console.log("up: " + counter_up + " down " + counter_down + " left: " + counter_left + " right " + counter_right);
+        //console.log(this.col + "," + this.row);
+        //console.log("up: " + counter_up + " down " + counter_down + " left: " + counter_left + " right " + counter_right);
         if (up_down > 2 && left_right > 2)
         {
-            //Most likely going to be handled somewhere else.
-            //Scoring
+
+
             var multiplier = up_down + left_right - 1;
-            SCORE += 100 * (multiplier - 2) * (multiplier - 2);
+            //update total score
 
+            //console.log("MULTIPLIER IS:" + multiplier);
+            // Rotate block is block_type 5.
+            if(this.block_type == 5){
+                console.log("wut wut wut");
+                //this.board.rotate();
+                this.board.num_rotates_queued++;
+            } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
+                scoreLayer.updateScore(this.block_type, 3);
+
+            }
             //Deleting
-
-            for (var i=this.col-counter_left+1; i<this.col+counter_right-1; i++){
+            //Delete from left to right
+            for (var i=this.col-counter_left+1; i<this.col+counter_right; i++){
+                this.board.lock();
                 this.board.delete(i,this.row);
             }
-            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
+            //Delete from top to bottom
+            for (var i=this.row-counter_down+1; i<this.row+counter_up; i++) {
+                this.board.lock();
                 this.board.delete(this.col, i);
             }
-            for (i=this.col-counter_left+1; i<this.col-counter_right-1; i++){
+
+            for (var i=this.col-counter_left+1; i<this.col+counter_right; i++){
+                this.board.unlock();
                 this.board.dropDown(i,this.row);
             }
-            for (i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
+            for (var i=this.row-counter_down+1; i<this.row+counter_up; i++) {
+                this.board.unlock();
                 this.board.dropDown(this.col, i);
             }
             return true;
         }
 
-        else if (up_down > 2 && left_right < 3)
+        else if (up_down > 2/* && left_right < 3*/)
         {
             //Scoring
-            var multiplier = up_down - 1;
-            SCORE += 100 * (multiplier - 2) * (multiplier - 2);
+            var multiplier = up_down;
+            //console.log("MULTIPLIER IS:"+multiplier);
+            // Rotate block is block_type 5.
+            if(this.block_type == 5){
+                console.log("wut wut wut");
+                //this.board.rotate();
 
-            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++){
-                this.board.delete(this.col,i);
+                this.board.num_rotates_queued++;
+            } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
+                scoreLayer.updateScore(this.block_type, 3);
+
             }
 
+
+            for (var i=this.row-counter_down+1; i<this.row+counter_up; i++){
+                this.board.lock();
+                this.board.delete(this.col,i);
+            }
             //Dropping Down
-            for (var i=this.row-counter_down+1; i<this.row+counter_up-1; i++) {
+            for (var i=this.row-counter_down+1; i<this.row+counter_up; i++) {
+                this.board.unlock();
                 this.board.dropDown(this.col, i);
             }
             return true
         }
 
-        else if (left_right > 2 && up_down < 3)
+        else if (left_right > 2/* && up_down < 3*/)
         {
+            //console.log("leftright match, blocktype: "+ this.block_type);
+            //console.log("at position: " + this.row + ", " +this.col);
             //Scoring
             var multiplier = left_right - 1;
-            SCORE += 100 * (multiplier - 2) * (multiplier - 2);
+            console.log("MULTIPLIER IS:" + multiplier);
+            // Rotate block is block_type 5.
+            if(this.block_type == 5){
+                console.log("wut wut wut");
+                //this.board.rotate();
+                this.board.num_rotates_queued++;
+            } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
+                scoreLayer.updateScore(this.block_type, 3);
 
-            for (var i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
-            {
+            }
+
+            //console.log(counter_left);
+
+            //console.log(this.col-counter_left+1 + " to " + this.col+counter_right-1);
+            for (var i=this.col-counter_left+1; i<this.col+counter_right; i++){
+                this.board.lock();
+                //console.log("deleting " + i);
                 this.board.delete(i,this.row);
+            }
+
+            //console.log(this.col-counter_left+1 + " to " + this.col+counter_right-1);
+            for (var i=this.col-counter_left+1; i<this.col+counter_right; i++){
+                this.board.unlock();
+                //console.log("dropping " + i);
                 this.board.dropDown(i,this.row);
             }
+
+            //for (var i=this.col-counter_left+1; i<this.col-counter_right-1; i++)
+            //{
+            //    this.board.delete(i,this.row);
+            //    this.board.dropDown(i,this.row);
+            //}
             return true
         }
         else
         {
-
-//<<<<<<< HEAD
-//            var temp = this.block_type;
-//            this.block_type = block2.block_type;
-//            block2.block_type = temp;
-//=======
+            //console.log("no match");
             return false;
-//>>>>>>> c7aff5f4a6533dc6feae29646bebf2e1d87b2ec3
         }
+    },
+    adjacent:function(block2){
+        //Returns true iff this and block2 are next to each other (not diagonally)
+        if(Math.abs(this.col - block2.col) + Math.abs(this.row - block2.row) == 1){
+            return true;
+        }
+        return false;
     },
     moveTo:function(dest){
         this.stopAllActions();
@@ -189,12 +243,26 @@ var Block= cc.Sprite.extend({
             this.board.unlock();
         }
         //.log(dest);
+        //console.log("locking");
+        //console.log(this);
         this.board.lock();
-        this.locking = true
-        var sequence =  new cc.Sequence(new cc.MoveTo(1,dest),new cc.callFunc(function(a){
+        this.locking = true;
+        var sequence =  new cc.Sequence(new cc.MoveTo(.5,dest),new cc.callFunc(function(a){
             //console.log(a);
-            a.board.unlock();
-            a.locking = false;
+            if(!a.check_matches()){
+                //a.soft_move();
+                //a.soft_move = function(){};
+            //}else{
+                //a.soft_move = function(){};
+            }
+            if(a.locking == false){
+                console.warn("WARNING: A block was moving without locking the board.");
+            }else {
+                //console.log("unlocking");
+                //console.log(a);
+                a.board.unlock();
+                a.locking = false;
+            }
         }));
         //var move =new cc.MoveTo(1,dest) ;
         //move.setTag(11);
@@ -203,8 +271,8 @@ var Block= cc.Sprite.extend({
     moveDown:function(){
         this.row -= 1;
         var dest = this.board.getCoord(this.col,this.row);
-        console.log(dest);
-        console.log("Row: " + this.row + " col: " + this.col);
+        //console.log(dest);
+        //console.log("Row: " + this.row + " col: " + this.col);
         //this.moveTo({x:100,y:100});
         this.moveTo(dest)
         //var move = new cc.MoveTo(1,dest);
