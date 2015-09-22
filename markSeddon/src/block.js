@@ -37,11 +37,12 @@ var Block= cc.Sprite.extend({
         return true;
     },
     onTouchEnded: function (touch,event) {
-        if(this.locked){
-            console.log(this.locked);
-            return false;
-        }
+
         var target = event.getCurrentTarget();
+        if(target.board.locked){
+            console.log("Locked, click absorbed.");
+            //return false;
+        }
 
         var locationInNode = target.convertToNodeSpace(touch.getLocation());
         var s = target.getContentSize();
@@ -72,7 +73,7 @@ var Block= cc.Sprite.extend({
     },
 
     swap:function(block2){
-        console.log("SWAPPED");
+        //console.log("SWAPPED");
         this.board.swap(this.col,this.row,block2.col,block2.row);
         //this.soft
         //if (!(this.check_matches() || block2.check_matches()))
@@ -111,8 +112,8 @@ var Block= cc.Sprite.extend({
         }
         var up_down = counter_up + counter_down - 1;
         var left_right = counter_left + counter_right - 1;
-        console.log(this.col + "," + this.row);
-        console.log("up: " + counter_up + " down " + counter_down + " left: " + counter_left + " right " + counter_right);
+        //console.log(this.col + "," + this.row);
+        //console.log("up: " + counter_up + " down " + counter_down + " left: " + counter_left + " right " + counter_right);
         if (up_down > 2 && left_right > 2)
         {
 
@@ -120,11 +121,12 @@ var Block= cc.Sprite.extend({
             var multiplier = up_down + left_right - 1;
             //update total score
 
-            console.log("MULTIPLIER IS:" + multiplier);
+            //console.log("MULTIPLIER IS:" + multiplier);
             // Rotate block is block_type 5.
             if(this.block_type == 5){
                 console.log("wut wut wut");
-                this.board.rotate();
+                //this.board.rotate();
+                this.board.num_rotates_queued++;
             } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
                 scoreLayer.updateScore(this.block_type, 3);
 
@@ -132,17 +134,21 @@ var Block= cc.Sprite.extend({
             //Deleting
             //Delete from left to right
             for (var i=this.col-counter_left+1; i<this.col+counter_right; i++){
+                this.board.lock();
                 this.board.delete(i,this.row);
             }
             //Delete from top to bottom
             for (var i=this.row-counter_down+1; i<this.row+counter_up; i++) {
+                this.board.lock();
                 this.board.delete(this.col, i);
             }
 
             for (var i=this.col-counter_left+1; i<this.col+counter_right; i++){
+                this.board.unlock();
                 this.board.dropDown(i,this.row);
             }
             for (var i=this.row-counter_down+1; i<this.row+counter_up; i++) {
+                this.board.unlock();
                 this.board.dropDown(this.col, i);
             }
             return true;
@@ -152,11 +158,13 @@ var Block= cc.Sprite.extend({
         {
             //Scoring
             var multiplier = up_down;
-            console.log("MULTIPLIER IS:"+multiplier);
+            //console.log("MULTIPLIER IS:"+multiplier);
             // Rotate block is block_type 5.
             if(this.block_type == 5){
                 console.log("wut wut wut");
-                this.board.rotate();
+                //this.board.rotate();
+
+                this.board.num_rotates_queued++;
             } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
                 scoreLayer.updateScore(this.block_type, 3);
 
@@ -164,10 +172,12 @@ var Block= cc.Sprite.extend({
 
 
             for (var i=this.row-counter_down+1; i<this.row+counter_up; i++){
+                this.board.lock();
                 this.board.delete(this.col,i);
             }
             //Dropping Down
             for (var i=this.row-counter_down+1; i<this.row+counter_up; i++) {
+                this.board.unlock();
                 this.board.dropDown(this.col, i);
             }
             return true
@@ -175,31 +185,34 @@ var Block= cc.Sprite.extend({
 
         else if (left_right > 2/* && up_down < 3*/)
         {
-            console.log("leftright match, blocktype: "+ this.block_type);
-            console.log("at position: " + this.row + ", " +this.col);
+            //console.log("leftright match, blocktype: "+ this.block_type);
+            //console.log("at position: " + this.row + ", " +this.col);
             //Scoring
             var multiplier = left_right - 1;
             console.log("MULTIPLIER IS:" + multiplier);
             // Rotate block is block_type 5.
             if(this.block_type == 5){
                 console.log("wut wut wut");
-                this.board.rotate();
+                //this.board.rotate();
+                this.board.num_rotates_queued++;
             } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
                 scoreLayer.updateScore(this.block_type, 3);
 
             }
 
-            console.log(counter_left);
+            //console.log(counter_left);
 
-            console.log(this.col-counter_left+1 + " to " + this.col+counter_right-1);
+            //console.log(this.col-counter_left+1 + " to " + this.col+counter_right-1);
             for (var i=this.col-counter_left+1; i<this.col+counter_right; i++){
-                console.log("deleting " + i);
+                this.board.lock();
+                //console.log("deleting " + i);
                 this.board.delete(i,this.row);
             }
 
-            console.log(this.col-counter_left+1 + " to " + this.col+counter_right-1);
+            //console.log(this.col-counter_left+1 + " to " + this.col+counter_right-1);
             for (var i=this.col-counter_left+1; i<this.col+counter_right; i++){
-                console.log("dropping " + i);
+                this.board.unlock();
+                //console.log("dropping " + i);
                 this.board.dropDown(i,this.row);
             }
 
@@ -230,17 +243,25 @@ var Block= cc.Sprite.extend({
             this.board.unlock();
         }
         //.log(dest);
+        //console.log("locking");
+        //console.log(this);
         this.board.lock();
         this.locking = true;
         var sequence =  new cc.Sequence(new cc.MoveTo(1,dest),new cc.callFunc(function(a){
             //console.log(a);
-            a.board.unlock();
-            a.locking = false;
             if(!a.check_matches()){
                 //a.soft_move();
                 //a.soft_move = function(){};
             //}else{
                 //a.soft_move = function(){};
+            }
+            if(a.locking == false){
+                console.warn("WARNING: A block was moving without locking the board.");
+            }else {
+                //console.log("unlocking");
+                //console.log(a);
+                a.board.unlock();
+                a.locking = false;
             }
         }));
         //var move =new cc.MoveTo(1,dest) ;
