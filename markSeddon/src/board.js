@@ -5,7 +5,7 @@ var Board = cc.Sprite.extend({
         this._super(res.board_png);
         BOARD = this;
         this.click_queue = null;
-        this.arr_size = 4;
+        this.arr_size = 8;
         this.num_rotates_queued = 0;
         this.blockQueue = [];
         this.block_size = 64; //how big the blocks are (diameter or width/height) on the longest dimension.
