@@ -274,8 +274,9 @@ var Board = cc.Sprite.extend({
     delete:function(x,y){
         //Makes x,y null. Call dropDown() on this location soon after calling this function, and also visually delete
         //the block.
-        console.trace();
-        this.arr[x][y].removeFromParent(true);
+
+        //console.trace();
+        this.arr[x][y].removeFromParentAndCleanup();
         this.arr[x][y] = null;
 
     }
