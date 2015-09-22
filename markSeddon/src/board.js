@@ -161,12 +161,13 @@ var Board = cc.Sprite.extend({
             if(y == this.arr_size - 1){
                 //console.log("Top row!");
                 //if this is the top row...
-                //if(this.blockQueue.length > 0){
-                //    temp = this.blockQueue.pop();
-                //    temp.col = y;
-                //    temp.row = x;
-                //}
-                var temp = new Block(x,y,this);
+                if(this.blockQueue.length > 0){
+                    temp = this.blockQueue.pop();
+                    temp.col = y;
+                    temp.row = x;
+                }else{
+                    var temp = new Block(x,y,this);
+                }
                 var tpos = this.getCoord(x,y+1);
                 temp.x = tpos.x;
                 temp.y = tpos.y;

@@ -127,7 +127,7 @@ var Block= cc.Sprite.extend({
                 console.log("wut wut wut");
                 //this.board.rotate();
                 this.board.num_rotates_queued++;
-            } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
+            } else if(this.block_type < 5){ /* Otherwise, the  block is normal. Therefore the scores get updated. */
                 scoreLayer.updateScore(this.block_type, 3);
 
             }
@@ -165,7 +165,7 @@ var Block= cc.Sprite.extend({
                 //this.board.rotate();
 
                 this.board.num_rotates_queued++;
-            } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
+            } else if(this.block_type < 5) { /* Otherwise, the  block is normal. Therefore the scores get updated. */
                 scoreLayer.updateScore(this.block_type, 3);
 
             }
@@ -195,7 +195,7 @@ var Block= cc.Sprite.extend({
                 console.log("wut wut wut");
                 //this.board.rotate();
                 this.board.num_rotates_queued++;
-            } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
+            } else if(this.block_type < 5) { /* Otherwise, the  block is normal. Therefore the scores get updated. */
                 scoreLayer.updateScore(this.block_type, 3);
 
             }
