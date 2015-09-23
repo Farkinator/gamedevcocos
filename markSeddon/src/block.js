@@ -307,7 +307,7 @@ var Block= cc.Sprite.extend({
             }
             //console.log(a);
             console.log(swapping);
-            if(a.check_matches()) {
+            if(a.check_matches() || (a.block_type == 999 && a.inMiddle())) {
                 console.log("matches");
                 //Swapping should be true when two blocks are swapping, [false,block] if one block failed to swap, and [true,block]
                 //if one block succeeded at swapping, and undefined otherwise.

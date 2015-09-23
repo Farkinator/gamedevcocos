@@ -9,7 +9,16 @@ SpecialBlock = Block.extend({
         cc.spriteFrameCache.addSpriteFrame (new cc.SpriteFrame (res.special_png),"special");
         this.setSpriteFrame("special");
         this.block_type = 999;
-
+        this.inMiddle = function(){
+            for(var i = 0; i < this.specialSquares.length; i++){
+                if(this.col == this.specialSquares[i].x && this.row == this.specialSquares[i].y){
+                    console.log("in middle");
+                    return true;
+                }
+            }
+            console.log("not in middle.");
+            return false;
+        },
         this.check_matches = function(){
             var match = true;
             console.log("Check matches on a special block.");

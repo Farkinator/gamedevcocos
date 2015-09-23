@@ -34,7 +34,7 @@ var EndLayer = cc.Layer.extend({
         this.addChild(spriteBG);
 
         //Get to displaying the Total Score, front and center.
-        this.totalscore = new cc.LabelTTF("You " + this.win_message + " with " + scoreObj[6] + " points!", "Helvetica", 50);
+        this.totalscore = new cc.LabelTTF("You " + this.win_message + " with " + Math.floor(scoreObj[6]) + " points!", "Helvetica", 50);
         this.totalscore.setColor(cc.color(0,0,0));//black color
         this.totalscore.setPosition(cc.p(512, winsize.height - 80));
         this.addChild(this.totalscore);
