@@ -12,16 +12,13 @@ SpecialBlock = Block.extend({
         this.inMiddle = function(){
             for(var i = 0; i < this.specialSquares.length; i++){
                 if(this.col == this.specialSquares[i].x && this.row == this.specialSquares[i].y){
-                    console.log("in middle");
                     return true;
                 }
             }
-            console.log("not in middle.");
             return false;
         },
         this.check_matches = function(){
             var match = true;
-            console.log("Check matches on a special block.");
             for(var i = 0; i < this.specialSquares.length; i++){
                 if(!this.match(this.specialSquares[i].x,this.specialSquares[i].y)){
                     match = false;
@@ -29,7 +26,6 @@ SpecialBlock = Block.extend({
             }
             if(match) {
                 scoreLayer.gameOver(true);
-                console.log("YAY YOU WIN.");
             }else{
                 this.plainmatch();
             }

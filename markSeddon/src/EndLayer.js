@@ -4,7 +4,6 @@
 var EndLayer = cc.Layer.extend({
 
     ctor:function(scoreObj,win){
-        console.log("win message: " + win);
         if(win){
             this.win_message = "won";
         }else{

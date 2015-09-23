@@ -24,7 +24,6 @@ var Board = cc.Sprite.extend({
             var out = {x:0,y:0};
             out.x = this.block_boarder + this.block_size * (x + .5) + (this.block_offset) * (x-1);
             out.y = this.block_boarder + this.block_size * (y + .5) + (this.block_offset) * (y-1);
-            //console.log("goes to X: " + x + " Y: " + y);
             return out;
         },
     getCoord:function(x,y){
@@ -32,7 +31,6 @@ var Board = cc.Sprite.extend({
             //meaning the value should only be used by children of the board (or be converted to global coordinates
             //before being used)
             //Works when the board is rotated.
-            //console.log("X: " + x + " Y: " + y);
 
             if(this.rotation == 0){
                 return this._getCoord(x,y);
@@ -53,7 +51,6 @@ var Board = cc.Sprite.extend({
     instantiate:function () {
         //This function will clear arr if needed, and then fill it with blocks. Call it whenever you need to refresh the
         //gameboard (including at the beginning of the game)
-        console.log("INSTANTIATE THIS");
         if(this.arr[0] != null && this.arr[0][0] != null){
             this.boardIterate(function(block){
                 block.board.delete(block.col,block.row);
@@ -71,14 +68,12 @@ var Board = cc.Sprite.extend({
         }
         //****************************************
         if (!(this.prep_check_moves())){
-            console.log("no moves - rebuilding");
             this.instantiate();
         }
         //****************************************
     },
     click:function(x,y){
         //notifies the board that the block at array coordinates x y is clicked.
-        //console.log(x + ', ' + y + " clicked");
 
         if(this.click_queue == null){
             this.click_queue = this.arr[x][y];
@@ -103,7 +98,6 @@ var Board = cc.Sprite.extend({
         }
     },
     swap:function(x1,y1,x2,y2){
-        //console.log(x1 + "," + y1 + ":" + x2 + "," + y2);
         if(!this.arr[x1][y1].adjacent(this.arr[x2][y2])){
             console.log("warning - swapping two blocks that are not adjacent");
         }
@@ -219,12 +213,10 @@ var Board = cc.Sprite.extend({
         //AFTER MOVING, BLOCKS MUST CALL Board.unlock().
         this.dropSound = cc.audioEngine.playEffect(res.dropdown_wav);
         if(this.arr[x][y] != null){
-            //console.log("Error: calling dropdown on a square with a tile is an invalid operation.");
             return;
         }
         if(y < this.arr_size) {
             if(y == this.arr_size - 1){
-                //console.log("Top row!");
                 //if this is the top row...
                 var temp;
                 if(this.blockQueue.length > 0){
@@ -239,7 +231,6 @@ var Board = cc.Sprite.extend({
                 temp.y = tpos.y;
                 //temp.y += this.block_size;
 
-                console.log(this.getCoord(x,y));
                 temp.moveTo(this.getCoord(x,y));
                 this.arr[x][y] = temp;
                 this.addChild(temp);
@@ -258,7 +249,6 @@ var Board = cc.Sprite.extend({
                 }
                 while(this.arr[x][y] == null){
                     //A cleanup call to make sure nothing is left hanging.
-                    //console.log("an additional dropdown was required.");
                     this.dropDown(x,y);
                 }
             }
@@ -267,27 +257,20 @@ var Board = cc.Sprite.extend({
     },
     lock:function(){
         //Locks the board, preventing it from accepting user input until unlock is called an equal number of times.
-        //console.log("lock function used.");
         this.locked++;
-        //console.log("locked(inlock)");
     },
 
     unlock:function(){
         //Unlocks the board once, making it accept input again unless something else is also locking it.
-        //console.log("unlock function used.");
         this.locked--;
-        //console.log("unlocked(inunlock)");
         if(this.locked == 0 && this.num_rotates_queued > 0){
             this.num_rotates_queued--;
-            //console.log(this);
-            //console.log(this.arr);
             this.rotate();
         }
     },
 
 
     arrayRotate:function(){
-        //console.log(this.arr);
         //Rotates the arr array. This should only be called by the local rotate() function!
         var temp = [];
         var arr = this.arr;
@@ -302,8 +285,6 @@ var Board = cc.Sprite.extend({
         for(var i = 0; i < this.arr.length;i++){
             //Then moves the objects in arr to the temporary array rotated.
             for(var j = 0; j < this.arr.length; j++){
-                //console.log("x: " + i + " y: " + j + " to x: " + j + " y: " + ((temp.length - 1)-i));
-                //console.log(i);
                 var newx = j;
                 var newy = (temp.length - 1) - i;
                 this.arr[i][j].row = newy;
@@ -372,11 +353,9 @@ var Board = cc.Sprite.extend({
             return;
         }
         if(this.arr[x][y].locking){
-            //console.log("Locking block is getting deleted. Unlocking.");
             this.unlock();
             this.arr[x][y].locking = false;
         }
-        //console.trace();
         cc.audioEngine.playEffect(res.clearblock_wav);
         this.arr[x][y].removeFromParent(true);
         this.arr[x][y] = null;

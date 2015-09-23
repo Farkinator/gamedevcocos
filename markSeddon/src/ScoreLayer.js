@@ -87,8 +87,8 @@ var ScoreLayer = cc.Layer.extend({
     // Will update the score object, taking in the multiplier (Controlled by the amount of blocks matched at once)
     updateScore:function(block_type, multiplier){
         //SCORE[6] contains the total score. Multiplier is updated depending on how many were matched at once.
-        this.SCORE[6] += 100 * (multiplier - 2) * (multiplier - 2);
-        this.SCORE[block_type] += 100 * (multiplier - 2) * (multiplier - 2);
+        this.SCORE[6] += 100 * (multiplier) * (multiplier);
+        this.SCORE[block_type] += 100 * (multiplier) * (multiplier);
 
         this.totalscore.setString("" + this.SCORE[6]);
         this.indivscorelabels[block_type].setString(" "+this.SCORE[block_type]);
@@ -115,7 +115,6 @@ var ScoreLayer = cc.Layer.extend({
         if(!win){
             this.SCORE[6] = Math.sqrt(this.SCORE[6]);
         }
-        console.log("win message: " + win);
         cc.director.runScene(new GameOverScene(this.SCORE,win));
 
     }
