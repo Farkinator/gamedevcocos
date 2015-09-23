@@ -14,7 +14,14 @@ var res = {
     block5_png: "res/BlockTech.png",
     block6_png: "res/BlockRotate.png",
 
-    select_png: "res/Selection.png"
+    select_png: "res/Selection.png",
+
+    bgmusic_wav: "res/audio/project1bgm.wav",
+    clearblock_wav: "res/audio/clearblock.wav",
+    rotate_wav: "res/audio/rotate.wav",
+    dropdown_wav: "res/audio/blockfall.wav",
+    match_wav: "res/audio/match.wav",
+    hitfloor_wav: "res/audio/blockhitfloor.wav"
 };
 
 var g_resources = [
@@ -30,8 +37,13 @@ var g_resources = [
     res.block4_png,
     res.block5_png,
     res.block6_png,
-    res.select_png
-
+    res.select_png,
+    res.bgmusic_wav,
+    res.clearblock_wav,
+    res.rotate_wav,
+    res.dropdown_wav,
+    res.match_wav,
+    res.hitfloor_wav
 ];
 res.blocks = [res.block1_png,res.block2_png,res.block3_png,res.block4_png,res.block5_png,res.block6_png];
 

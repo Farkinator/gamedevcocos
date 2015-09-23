@@ -11,6 +11,12 @@ var ScoreLayer = cc.Layer.extend({
 
     init:function(){
         this._super();
+        this.time_elapsed = 0;
+        //This is just making it easy to change for our sanity.
+        var time_limit_minutes = 5.0;
+        var time_limit_seconds = 0.0;
+        this.time_limit = time_limit_minutes * 60.0 + time_limit_seconds;
+
         winsize = cc.director.getWinSize();
         /*
             MARGINS AND SPACING
@@ -29,6 +35,10 @@ var ScoreLayer = cc.Layer.extend({
         this.scores_x = 800;
         //Spacing between the sprite of the block and the score label
         this.sprite_score_spacing = 100;
+        // Timer Height
+        this.timer_h = 660;
+        // Timer x
+        this.timer_x = 860;
 
         /*
             ARRAY DECLARATION
@@ -63,6 +73,15 @@ var ScoreLayer = cc.Layer.extend({
         this.totalscore.setColor(cc.color(0,0,0));//black color
         this.totalscore.setPosition(cc.p(this.total_x, winsize.height - (this.total_spacing + this.total_height)));
         this.addChild(this.totalscore);
+        //Timer label. If seconds is in the double digits
+        if(time_limit_seconds >=10) {
+            this.timerlabel = new cc.LabelTTF(time_limit_minutes + ":" + time_limit_seconds + " Remaining", "Times New Roman", 30);
+        } else {
+            this.timerlabel = new cc.LabelTTF(time_limit_minutes + ":0" + time_limit_seconds + " Remaining", "Times New Roman", 30);
+        }
+        this.timerlabel.setColor(cc.color(0,0,0));
+        this.timerlabel.setPosition(cc.p(this.timer_x, winsize.height-this.timer_h));
+        this.addChild(this.timerlabel);
 
     },
     // Will update the score object, taking in the multiplier (Controlled by the amount of blocks matched at once)
@@ -73,12 +92,29 @@ var ScoreLayer = cc.Layer.extend({
 
         this.totalscore.setString("" + this.SCORE[6]);
         this.indivscorelabels[block_type].setString(" "+this.SCORE[block_type]);
+
+    },
+    updateTimer:function(dt){
+        //I'm so lazy I didn't bother finding a cocos function to actually do timing.
+        this.time_elapsed+=dt;
+        var time_remaining = this.time_limit - this.time_elapsed;
+        if(time_remaining <=0){
+            this.gameOver();
+        } else { /* change the string of the timer.*/
+            var minute_count = time_remaining / 60;
+            var second_count = time_remaining % 60;
+            if(second_count >= 10){
+                this.timerlabel.setString(Math.floor(minute_count)+":"+Math.floor(second_count)+" Remaining");
+            } else {
+                this.timerlabel.setString(Math.floor(minute_count)+":0"+Math.floor(second_count)+" Remaining");
+            }
+        }
     },
     // GAME OVER function. Switches to the game over scene.
     gameOver:function(){
 
 
-        cc.director.runScene(new GameOverScene(SCORE));
+        cc.director.runScene(new GameOverScene(this.SCORE));
 
     }
 });

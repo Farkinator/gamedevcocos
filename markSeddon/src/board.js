@@ -5,7 +5,7 @@ var Board = cc.Sprite.extend({
         this._super(res.board_png);
         BOARD = this;
         this.click_queue = null;
-        this.arr_size = 4;
+        this.arr_size = 8;
         this.num_rotates_queued = 0;
         this.blockQueue = [];
         this.block_size = 64; //how big the blocks are (diameter or width/height) on the longest dimension.
@@ -103,8 +103,8 @@ var Board = cc.Sprite.extend({
         }
         var block1 = this.arr[x1][y1];
         var block2 = this.arr[x2][y2];
-        block1.moveTo(this.getCoord(x2,y2));
-        block2.moveTo(this.getCoord(x1,y1));
+        block1.moveTo(this.getCoord(x2,y2), false);
+        block2.moveTo(this.getCoord(x1,y1), false);
         block1.row = y2;
         block1.col = x2;
         block2.row = y1;
@@ -153,7 +153,7 @@ var Board = cc.Sprite.extend({
         //Dropdown should be called if there is an empty (null) square at (x,y). The above blocks will fall, and new
         //blocks will be created until all spaces above and incloding (x,y) have a non-null block.
         //AFTER MOVING, BLOCKS MUST CALL Board.unlock().
-
+        this.dropSound = cc.audioEngine.playEffect(res.dropdown_wav);
         if(this.arr[x][y] != null){
             console.log("Error: calling dropdown on a square with a tile is an invalid operation.");
             return;
@@ -172,7 +172,7 @@ var Board = cc.Sprite.extend({
                 temp.x = tpos.x;
                 temp.y = tpos.y;
                 //temp.y += this.block_size;
-                temp.moveTo(this.getCoord(x,y));
+                temp.moveTo(this.getCoord(x,y), true);
                 this.arr[x][y] = temp;
                 this.addChild(temp);
             }else{
@@ -291,6 +291,7 @@ var Board = cc.Sprite.extend({
                 a.rotation -= 360;
             }
         }));//cc.Sequence.create(rotate_action,unlock);
+        cc.audioEngine.playEffect(res.rotate_wav);
         this.runAction(sequence);
         //this.runAction(sequence);
     },
@@ -308,6 +309,7 @@ var Board = cc.Sprite.extend({
             this.arr[x][y].locking = false;
         }
         //console.trace();
+        cc.audioEngine.playEffect(res.clearblock_wav);
         this.arr[x][y].removeFromParent(true);
         this.arr[x][y] = null;
 
