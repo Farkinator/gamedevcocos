@@ -6,12 +6,10 @@ var GameOverScene = cc.Scene.extend({
     //
     ctor:function(scoreObj,win){
         this._super();
-        console.log("win message: " + win);
         this.init(scoreObj,win);
     },
 
     init:function(scoreObj,win){
-        console.log("win message: " + win);
         // Doesn't it feel like we're in one big relay race with these two objects?
         var endLayer = new EndLayer(scoreObj,win);
 

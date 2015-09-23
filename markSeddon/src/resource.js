@@ -24,7 +24,7 @@ var res = {
     match_wav: "res/audio/match.wav",
     hitfloor_wav: "res/audio/blockhitfloor.wav",
     special_png: "res/special.png",
-    select_png: "res/selection_plac.png"
+    select_png: "res/Selection.png"
 };
 
 var g_resources = [

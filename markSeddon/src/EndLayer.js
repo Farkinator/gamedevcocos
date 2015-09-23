@@ -4,7 +4,6 @@
 var EndLayer = cc.Layer.extend({
 
     ctor:function(scoreObj,win){
-        console.log("win message: " + win);
         if(win){
             this.win_message = "won";
         }else{
@@ -35,7 +34,7 @@ var EndLayer = cc.Layer.extend({
         this.addChild(spriteBG);
 
         //Get to displaying the Total Score, front and center.
-        this.totalscore = new cc.LabelTTF("You " + this.win_message + " with " + scoreObj[6] + " points!", "Helvetica", 50);
+        this.totalscore = new cc.LabelTTF("You " + this.win_message + " with " + Math.floor(scoreObj[6]) + " points!", "Helvetica", 50);
         this.totalscore.setColor(cc.color(0,0,0));//black color
         this.totalscore.setPosition(cc.p(512, winsize.height - 80));
         this.addChild(this.totalscore);
@@ -76,19 +75,20 @@ var EndLayer = cc.Layer.extend({
             this.indivscorelabels.setPosition(cc.p(90 + i * 170, winsize.height - 700));
             this.addChild(this.indivscorelabels);
         }
-        cc.EventListener.create({
+        var replayListener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,
             onTouchBegan: function (touch, event) {
                 //do something
-                console.log("wew lad");
+                console.log("touch began whooooo dawgy");
                 return true;
             },
             onTouchEnded: function (touch, event) {
-                console.log("wew lad");
+                console.log("touch ended wew lad");
+                cc.director.runScene(new MainMenuScene());
             }
         });
-
+        cc.eventManager.addListener(replayListener, spriteBG);
     }
 
 });
