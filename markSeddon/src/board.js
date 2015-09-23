@@ -159,6 +159,7 @@ var Board = cc.Sprite.extend({
         //Dropdown should be called if there is an empty (null) square at (x,y). The above blocks will fall, and new
         //blocks will be created until all spaces above and incloding (x,y) have a non-null block.
         //AFTER MOVING, BLOCKS MUST CALL Board.unlock().
+        cc.audioEngine.stopAllEffects();
         this.dropSound = cc.audioEngine.playEffect(res.dropdown_wav);
         if(this.arr[x][y] != null){
             console.log("Error: calling dropdown on a square with a tile is an invalid operation.");

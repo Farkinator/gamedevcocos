@@ -127,7 +127,7 @@ var Block= cc.Sprite.extend({
                 this.board.blockQueue.push(new SpecialBlock(0,0,BOARD));
             }
 
-            var multiplier = up_down + left_right - 1;
+            var multiplier = up_down-1 + left_right-1;
             //update total score
             //Play match audio effect.
             cc.audioEngine.playEffect(res.match_wav);
@@ -138,7 +138,7 @@ var Block= cc.Sprite.extend({
                 //this.board.rotate();
                 this.board.num_rotates_queued++;
             } else if(this.block_type < 5){ /* Otherwise, the  block is normal. Therefore the scores get updated. */
-                scoreLayer.updateScore(this.block_type, 3);
+                scoreLayer.updateScore(this.block_type, multiplier);
 
             }
             //Deleting
@@ -177,7 +177,7 @@ var Block= cc.Sprite.extend({
                 this.board.blockQueue.push(new SpecialBlock(0,0,BOARD));
             }
             //Scoring
-            var multiplier = up_down;
+            var multiplier = up_down-1;
             //Play match audio effect.
             cc.audioEngine.playEffect(res.match_wav);
             // Rotate block is block_type 5.
@@ -187,7 +187,7 @@ var Block= cc.Sprite.extend({
 
                 this.board.num_rotates_queued++;
             } else if(this.block_type < 5) { /* Otherwise, the  block is normal. Therefore the scores get updated. */
-                scoreLayer.updateScore(this.block_type, 3);
+                scoreLayer.updateScore(this.block_type, multiplier);
 
             }
 
@@ -231,7 +231,7 @@ var Block= cc.Sprite.extend({
                 //this.board.rotate();
                 this.board.num_rotates_queued++;
             } else if(this.block_type < 5) { /* Otherwise, the  block is normal. Therefore the scores get updated. */
-                scoreLayer.updateScore(this.block_type, 3);
+                scoreLayer.updateScore(this.block_type, multiplier);
 
             }
 
