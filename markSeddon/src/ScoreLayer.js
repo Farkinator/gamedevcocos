@@ -13,8 +13,8 @@ var ScoreLayer = cc.Layer.extend({
         this._super();
         this.time_elapsed = 0;
         //This is just making it easy to change for our sanity.
-        var time_limit_minutes = 5.0;
-        var time_limit_seconds = 0.0;
+        var time_limit_minutes = 0.0;
+        var time_limit_seconds = 2.0;
         this.time_limit = time_limit_minutes * 60.0 + time_limit_seconds;
 
         winsize = cc.director.getWinSize();

@@ -11,6 +11,7 @@ var EndLayer = cc.Layer.extend({
             this.win_message = "lost";
         }
         this._super();
+
         this.init(scoreObj);
     },
     init:function(scoreObj){
@@ -56,6 +57,11 @@ var EndLayer = cc.Layer.extend({
             this.storylabel.setPosition(cc.p(512, winsize.height - 500));
             endLayer.addChild(this.storylabel);
         });
+
+        this.mainmenu = new cc.LabelTTF("Click anywhere to return to the Main Menu", "Times New Roman", 35);
+        this.mainmenu.setPosition(cc.p(512, winsize.height-550));
+        this.mainmenu.setColor(cc.color(0,0,0));
+        this.addChild(this.mainmenu);
         // Array that will hold sprites representing the score for each block.
         this.blocks = [];
         //Score breakdown of all the different subjects
@@ -70,6 +76,19 @@ var EndLayer = cc.Layer.extend({
             this.indivscorelabels.setPosition(cc.p(90 + i * 170, winsize.height - 700));
             this.addChild(this.indivscorelabels);
         }
+        cc.EventListener.create({
+            event: cc.EventListener.TOUCH_ONE_BY_ONE,
+            swallowTouches: true,
+            onTouchBegan: function (touch, event) {
+                //do something
+                console.log("wew lad");
+                return true;
+            },
+            onTouchEnded: function (touch, event) {
+                console.log("wew lad");
+            }
+        });
 
     }
+
 });
