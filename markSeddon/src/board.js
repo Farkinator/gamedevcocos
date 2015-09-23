@@ -85,6 +85,12 @@ var Board = cc.Sprite.extend({
             this.click_queue.selected(true);
             //Indicate to the player that this is the block that they are preparing to switch.
         }else{
+            if(this.click_queue == this.arr[x][y]){
+                this.click_queue.selected(false);
+                this.click_queue = null;
+                return;
+            }
+            //De-select the block, then check if swappable.
             this.click_queue.selected(false);
             if(this.click_queue.adjacent(this.arr[x][y])){
                 this.click_queue.swap(this.arr[x][y]);
@@ -162,17 +168,21 @@ var Board = cc.Sprite.extend({
             if(y == this.arr_size - 1){
                 //console.log("Top row!");
                 //if this is the top row...
-                //if(this.blockQueue.length > 0){
-                //    temp = this.blockQueue.pop();
-                //    temp.col = y;
-                //    temp.row = x;
-                //}
-                var temp = new Block(x,y,this);
+                var temp;
+                if(this.blockQueue.length > 0){
+                    temp = this.blockQueue.pop();
+                    temp.col = x;
+                    temp.row = y;
+                }else{
+                    temp = new Block(x,y,this);
+                }
                 var tpos = this.getCoord(x,y+1);
                 temp.x = tpos.x;
                 temp.y = tpos.y;
                 //temp.y += this.block_size;
-                temp.moveTo(this.getCoord(x,y), true);
+
+                console.log(this.getCoord(x,y));
+                temp.moveTo(this.getCoord(x,y));
                 this.arr[x][y] = temp;
                 this.addChild(temp);
             }else{
@@ -212,7 +222,7 @@ var Board = cc.Sprite.extend({
         if(this.locked == 0 && this.num_rotates_queued > 0){
             this.num_rotates_queued--;
             //console.log(this);
-            console.log(this.arr);
+            //console.log(this.arr);
             this.rotate();
         }
     },
