@@ -133,7 +133,8 @@ var Block= cc.Sprite.extend({
 
             var multiplier = up_down + left_right - 1;
             //update total score
-
+            //Play match audio effect.
+            cc.audioEngine.playEffect(res.match_wav);
             //console.log("MULTIPLIER IS:" + multiplier);
             // Rotate block is block_type 5.
             if(this.block_type == 5){
@@ -181,7 +182,8 @@ var Block= cc.Sprite.extend({
             }
             //Scoring
             var multiplier = up_down;
-            //console.log("MULTIPLIER IS:"+multiplier);
+            //Play match audio effect.
+            cc.audioEngine.playEffect(res.match_wav);
             // Rotate block is block_type 5.
             if(this.block_type == 5){
                 console.log("wut wut wut");
@@ -223,6 +225,10 @@ var Block= cc.Sprite.extend({
             //Scoring
             var multiplier = left_right - 1;
             console.log("MULTIPLIER IS:" + multiplier);
+
+            //Play match audio effect.
+            cc.audioEngine.playEffect(res.match_wav);
+
             // Rotate block is block_type 5.
             if(this.block_type == 5){
                 console.log("wut wut wut");
@@ -282,7 +288,8 @@ var Block= cc.Sprite.extend({
         }
         return false;
     },
-    moveTo:function(dest, temporary){
+    //Falling is simply a boolean to track whether or not we're hitting the floor because of a swap or because of a fall.
+    moveTo:function(dest, falling){
         this.stopAllActions();
         if(this.locking){
             //If actions were stopped, that means there is an extra lock on the board. Remove it.
@@ -294,6 +301,10 @@ var Block= cc.Sprite.extend({
         this.board.lock();
         this.locking = true;
         var sequence =  new cc.Sequence(new cc.MoveTo(.5,dest),new cc.callFunc(function(a){
+            // This check prevents the hitfloor sound from playing when the player swaps two blocks on the bottom row.
+            if(falling) {
+                cc.audioEngine.playEffect(res.hitfloor_wav);
+            }
             //console.log(a);
             console.log(swapping);
             if(a.check_matches()) {
