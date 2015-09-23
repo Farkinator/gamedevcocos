@@ -24,7 +24,6 @@ var Board = cc.Sprite.extend({
             var out = {x:0,y:0};
             out.x = this.block_boarder + this.block_size * (x + .5) + (this.block_offset) * (x-1);
             out.y = this.block_boarder + this.block_size * (y + .5) + (this.block_offset) * (y-1);
-            //console.log("goes to X: " + x + " Y: " + y);
             return out;
         },
     getCoord:function(x,y){
@@ -32,7 +31,6 @@ var Board = cc.Sprite.extend({
             //meaning the value should only be used by children of the board (or be converted to global coordinates
             //before being used)
             //Works when the board is rotated.
-            //console.log("X: " + x + " Y: " + y);
 
             if(this.rotation == 0){
                 return this._getCoord(x,y);
@@ -53,7 +51,6 @@ var Board = cc.Sprite.extend({
     instantiate:function () {
         //This function will clear arr if needed, and then fill it with blocks. Call it whenever you need to refresh the
         //gameboard (including at the beginning of the game)
-        console.log("INSTANTIATE THIS");
         if(this.arr[0] != null && this.arr[0][0] != null){
             this.boardIterate(function(block){
                 block.board.delete(block.col,block.row);
@@ -70,35 +67,44 @@ var Board = cc.Sprite.extend({
             this.dropDown(i,0);
         }
         //****************************************
-        //if (!(this.prep_check_moves())){
-        //    console.log("no moves - rebuilding");
-        //    this.instantiate();
-        //}
+        if (!(this.prep_check_moves())){
+            this.instantiate();
+        }
         //****************************************
     },
     click:function(x,y){
         //notifies the board that the block at array coordinates x y is clicked.
-        //console.log(x + ', ' + y + " clicked");
+
         if(this.click_queue == null){
             this.click_queue = this.arr[x][y];
+            this.click_queue.selected(true);
+            //Indicate to the player that this is the block that they are preparing to switch.
         }else{
+            if(this.click_queue == this.arr[x][y]){
+                this.click_queue.selected(false);
+                this.click_queue = null;
+                return;
+            }
+            //De-select the block, then check if swappable.
+            this.click_queue.selected(false);
             if(this.click_queue.adjacent(this.arr[x][y])){
                 this.click_queue.swap(this.arr[x][y]);
                 this.click_queue = null;
             }else{
                 this.click_queue = this.arr[x][y];
+                this.click_queue.selected(true);
             }
+
         }
     },
     swap:function(x1,y1,x2,y2){
-        console.log(x1 + "," + y1 + ":" + x2 + "," + y2);
         if(!this.arr[x1][y1].adjacent(this.arr[x2][y2])){
             console.log("warning - swapping two blocks that are not adjacent");
         }
         var block1 = this.arr[x1][y1];
         var block2 = this.arr[x2][y2];
-        block1.moveTo(this.getCoord(x2,y2));
-        block2.moveTo(this.getCoord(x1,y1));
+        block1.moveTo(this.getCoord(x2,y2), false);
+        block2.moveTo(this.getCoord(x1,y1), false);
         block1.row = y2;
         block1.col = x2;
         block2.row = y1;
@@ -111,40 +117,93 @@ var Board = cc.Sprite.extend({
     {
         for (var i = 0; i < this.arr_size; i++)
         {
-            var bool;
             for (var j = 0; j < this.arr_size; j++)
             {
-                if (i < 7)
+                if (i < (this.arr_size-1))
                 {
                     var n1 = i + 1;
-                    bool = (this.arr[n1][j]).are_there_moves();
-                    if (bool)
+
+                    //Swap the blocks
+                    var temp1 = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = (this.arr[n1][j]).block_type;
+                    (this.arr[n1][j]).block_type = temp1;
+
+                    //Check if the move was successful
+                    if ((this.arr[n1][j]).are_there_moves())
+                    {
+                        //Swap them back if it was
+                        (this.arr[n1][j]).block_type = (this.arr[i][j]).block_type;
+                        (this.arr[i][j]).block_type = temp1;
                         return true;
+                    }
+                    //Swap them back to ensure the board stays the same.
+                    (this.arr[n1][j]).block_type = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = temp1;
                 }
                 if (i > 0)
                 {
                     var n2 = i - 1;
-                    bool = (this.arr[n2][j]).are_there_moves();
-                    if (bool)
+
+                    //Swaps the blocks
+                    var temp2 = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = (this.arr[n2][j]).block_type;
+                    (this.arr[n2][j]).block_type = temp2;
+
+                    //Check if the move was successful
+                    if ((this.arr[n2][j]).are_there_moves())
+                    {
+                        //Swap them back if it was
+                        (this.arr[n2][j]).block_type = (this.arr[i][j]).block_type;
+                        (this.arr[i][j]).block_type = temp2;
                         return true;
+                    }
+                    //Swap them back to ensure the board stays the same
+                    (this.arr[n2][j]).block_type = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = temp2;
                 }
-                if (j < 7)
+                if (j < (this.arr_size-1))
                 {
                     var n3 = j + 1;
-                    bool = (this.arr[i][n3]).are_there_moves();
-                    if (bool)
+
+                    //Swap the blocks
+                    var temp3 = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = (this.arr[i][n3]).block_type;
+                    (this.arr[i][n3]).block_type = temp3;
+
+                    if ((this.arr[i][n3]).are_there_moves())
+                    {
+                        //Swap them back if it was
+                        (this.arr[i][n3]).block_type = (this.arr[i][j]).block_type;
+                        (this.arr[i][j]).block_type = temp3;
                         return true;
+                    }
+                    //Swap them back to ensure the board stays the same
+                    (this.arr[i][n3]).block_type = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = temp3;
                 }
                 if (j > 0)
                 {
                     var n4 = j - 1;
-                    bool = (this.arr[i][n4]).are_there_moves();
-                    if (bool)
+
+                    //Swap the blocks
+                    var temp4 = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = (this.arr[i][n4]).block_type;
+                    (this.arr[i][n4]).block_type = temp4;
+
+                    if ((this.arr[i][n4]).are_there_moves())
+                    {
+                        //Swap them back if it was
+                        (this.arr[i][n4]).block_type = (this.arr[i][j]).block_type;
+                        (this.arr[i][j]).block_type = temp4;
                         return true;
+                    }
+                    //Swap them back to ensure the board stays the same
+                    (this.arr[i][n4]).block_type = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = temp4;
                 }
             }
-            return false;
         }
+        return false;
     },
 
 
@@ -152,25 +211,27 @@ var Board = cc.Sprite.extend({
         //Dropdown should be called if there is an empty (null) square at (x,y). The above blocks will fall, and new
         //blocks will be created until all spaces above and incloding (x,y) have a non-null block.
         //AFTER MOVING, BLOCKS MUST CALL Board.unlock().
-
+        cc.audioEngine.stopAllEffects();
+        this.dropSound = cc.audioEngine.playEffect(res.dropdown_wav);
         if(this.arr[x][y] != null){
-            console.log("Error: calling dropdown on a square with a tile is an invalid operation.");
             return;
         }
         if(y < this.arr_size) {
             if(y == this.arr_size - 1){
-                //console.log("Top row!");
                 //if this is the top row...
-                //if(this.blockQueue.length > 0){
-                //    temp = this.blockQueue.pop();
-                //    temp.col = y;
-                //    temp.row = x;
-                //}
-                var temp = new Block(x,y,this);
+                var temp;
+                if(this.blockQueue.length > 0){
+                    temp = this.blockQueue.pop();
+                    temp.col = x;
+                    temp.row = y;
+                }else{
+                    temp = new Block(x,y,this);
+                }
                 var tpos = this.getCoord(x,y+1);
                 temp.x = tpos.x;
                 temp.y = tpos.y;
                 //temp.y += this.block_size;
+
                 temp.moveTo(this.getCoord(x,y));
                 this.arr[x][y] = temp;
                 this.addChild(temp);
@@ -189,7 +250,6 @@ var Board = cc.Sprite.extend({
                 }
                 while(this.arr[x][y] == null){
                     //A cleanup call to make sure nothing is left hanging.
-                    //console.log("an additional dropdown was required.");
                     this.dropDown(x,y);
                 }
             }
@@ -198,27 +258,20 @@ var Board = cc.Sprite.extend({
     },
     lock:function(){
         //Locks the board, preventing it from accepting user input until unlock is called an equal number of times.
-        //console.log("lock function used.");
         this.locked++;
-        console.log("locked(inlock)");
     },
 
     unlock:function(){
         //Unlocks the board once, making it accept input again unless something else is also locking it.
-        //console.log("unlock function used.");
         this.locked--;
-        console.log("unlocked(inunlock)");
         if(this.locked == 0 && this.num_rotates_queued > 0){
             this.num_rotates_queued--;
-            //console.log(this);
-            console.log(this.arr);
             this.rotate();
         }
     },
 
 
     arrayRotate:function(){
-        console.log(this.arr);
         //Rotates the arr array. This should only be called by the local rotate() function!
         var temp = [];
         var arr = this.arr;
@@ -233,8 +286,6 @@ var Board = cc.Sprite.extend({
         for(var i = 0; i < this.arr.length;i++){
             //Then moves the objects in arr to the temporary array rotated.
             for(var j = 0; j < this.arr.length; j++){
-                //console.log("x: " + i + " y: " + j + " to x: " + j + " y: " + ((temp.length - 1)-i));
-                //console.log(i);
                 var newx = j;
                 var newy = (temp.length - 1) - i;
                 this.arr[i][j].row = newy;
@@ -290,6 +341,7 @@ var Board = cc.Sprite.extend({
                 a.rotation -= 360;
             }
         }));//cc.Sequence.create(rotate_action,unlock);
+        cc.audioEngine.playEffect(res.rotate_wav);
         this.runAction(sequence);
         //this.runAction(sequence);
     },
@@ -302,11 +354,10 @@ var Board = cc.Sprite.extend({
             return;
         }
         if(this.arr[x][y].locking){
-            console.log("Locking block is getting deleted. Unlocking.");
             this.unlock();
             this.arr[x][y].locking = false;
         }
-        //console.trace();
+        cc.audioEngine.playEffect(res.clearblock_wav);
         this.arr[x][y].removeFromParent(true);
         this.arr[x][y] = null;
 

@@ -3,12 +3,18 @@
  */
 var EndLayer = cc.Layer.extend({
 
-    ctor:function(scoreObj){
+    ctor:function(scoreObj,win){
+        if(win){
+            this.win_message = "won";
+        }else{
+            this.win_message = "lost";
+        }
         this._super();
+
         this.init(scoreObj);
     },
     init:function(scoreObj){
-        winsize = cc.director.getWinSize();
+        var winsize = cc.director.getWinSize();
 
         var running_max = 0;
         //We've got to save which kind of subscore won to use
@@ -23,17 +29,17 @@ var EndLayer = cc.Layer.extend({
 
         //create the background image for endgame and place at center
         var centerPos = cc.p(winsize.width / 2, winsize.height / 2);
-        var spriteBG = new cc.Sprite(res.playBG_png);
+        var spriteBG = new cc.Sprite(res.gameover_png);
         spriteBG.setPosition(centerPos);
         this.addChild(spriteBG);
 
         //Get to displaying the Total Score, front and center.
-        this.totalscore = new cc.LabelTTF("You finished with " + scoreObj[6] + " points!", "Helvetica", 50);
+        this.totalscore = new cc.LabelTTF("You " + this.win_message + " with " + Math.floor(scoreObj[6]) + " points!", "Helvetica", 50);
         this.totalscore.setColor(cc.color(0,0,0));//black color
         this.totalscore.setPosition(cc.p(512, winsize.height - 80));
         this.addChild(this.totalscore);
 
-
+        endLayer = this;
         // Fetch the story data from the JSON file containing them.
         cc.loader.loadJson("res/stories.json", function(error, data){
             // Use w_index to find the category of story to display, and display a random story in that category
@@ -50,10 +56,15 @@ var EndLayer = cc.Layer.extend({
             this.storylabel.setPosition(cc.p(512, winsize.height - 500));
             endLayer.addChild(this.storylabel);
         });
+
+        this.mainmenu = new cc.LabelTTF("Click anywhere to return to the Main Menu", "Times New Roman", 35);
+        this.mainmenu.setPosition(cc.p(512, winsize.height-550));
+        this.mainmenu.setColor(cc.color(0,0,0));
+        this.addChild(this.mainmenu);
         // Array that will hold sprites representing the score for each block.
         this.blocks = [];
         //Score breakdown of all the different subjects
-        for(var i = 0; i < 6; i++){
+        for(var i = 0; i < 5; i++){
             // Display the block that each score represents.
             this.blocks[i] = new cc.Sprite.create(res.blocks[i]);
             this.blocks[i].setPosition(cc.p(90 + i * 170, winsize.height - 650));
@@ -64,6 +75,20 @@ var EndLayer = cc.Layer.extend({
             this.indivscorelabels.setPosition(cc.p(90 + i * 170, winsize.height - 700));
             this.addChild(this.indivscorelabels);
         }
-
+        var replayListener = cc.EventListener.create({
+            event: cc.EventListener.TOUCH_ONE_BY_ONE,
+            swallowTouches: true,
+            onTouchBegan: function (touch, event) {
+                //do something
+                console.log("touch began whooooo dawgy");
+                return true;
+            },
+            onTouchEnded: function (touch, event) {
+                console.log("touch ended wew lad");
+                cc.director.runScene(new MainMenuScene());
+            }
+        });
+        cc.eventManager.addListener(replayListener, spriteBG);
     }
+
 });
