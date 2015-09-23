@@ -20,6 +20,7 @@
         "src/board.js",
         "src/block.js",
         "src/GameOverScene.js",
-        "src/EndLayer.js"
+        "src/EndLayer.js",
+        "src/specialblock.js"
     ]
 }

@@ -3,19 +3,24 @@
  */
 
 var Block= cc.Sprite.extend({
-    ctor:function(in_col, in_row, in_board){
+    ctor:function(in_col, in_row, in_board,sprite){
         if(in_board == undefined){
             console.log("ERROR - BOARD IS UNDEFINED.");
         }
+        swapping = null;
         //Initialization
-
-        var type = this.set_block();
-        this._super(res.blocks[type]);
+        if(sprite == undefined){
+            var type = this.set_block();
+            this._super(res.blocks[type]);
+            this.block_type = type;
+        }else{
+            this._super(sprite);
+            this.block_type = 999;
+        }
         //console.log("row: " + in_row + " col: " + in_col);
         this.row = in_row;
         this.col = in_col;
         this.board = in_board;
-        this.block_type = type;
         this.soft_move = function(){};
         this.rotation = 360 - this.board.rotation;
         //console.log(this);
@@ -72,9 +77,15 @@ var Block= cc.Sprite.extend({
         return int; //options[int];
     },
 
-    swap:function(block2){
+    swap:function(block2,secondSwap){
         //console.log("SWAPPED");
+        if(secondSwap){
+            swapping = null;
+        }else{
+            swapping = true;
+        }
         this.board.swap(this.col,this.row,block2.col,block2.row);
+
         //this.soft
         //if (!(this.check_matches() || block2.check_matches()))
         //{
@@ -113,20 +124,25 @@ var Block= cc.Sprite.extend({
         //console.log("up: " + counter_up + " down " + counter_down + " left: " + counter_left + " right " + counter_right);
         if (up_down > 2 && left_right > 2)
         {
-
+            if(left_right > 3){
+                this.board.blockQueue.push(new SpecialBlock(0,0,BOARD));
+            }
+            if(up_down > 3){
+                this.board.blockQueue.push(new SpecialBlock(0,0,BOARD));
+            }
 
             var multiplier = up_down + left_right - 1;
             //update total score
-
+            //Play match audio effect.
+            cc.audioEngine.playEffect(res.match_wav);
             //console.log("MULTIPLIER IS:" + multiplier);
             // Rotate block is block_type 5.
             if(this.block_type == 5){
                 console.log("wut wut wut");
                 //this.board.rotate();
                 this.board.num_rotates_queued++;
-            } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
-                scoreLayer.updateScore(this.block_type, multiplier);
-
+            } else if(this.block_type < 5){ /* Otherwise, the  block is normal. Therefore the scores get updated. */
+                scoreLayer.updateScore(this.block_type, 3);
             }
             //Deleting
             //Delete from left to right
@@ -160,18 +176,21 @@ var Block= cc.Sprite.extend({
 
         else if (up_down > 2/* && left_right < 3*/)
         {
+            if(up_down > 3){
+                this.board.blockQueue.push(new SpecialBlock(0,0,BOARD));
+            }
             //Scoring
             var multiplier = up_down;
-            //console.log("MULTIPLIER IS:"+multiplier);
+            //Play match audio effect.
+            cc.audioEngine.playEffect(res.match_wav);
             // Rotate block is block_type 5.
             if(this.block_type == 5){
                 //console.log("wut wut wut");
                 //this.board.rotate();
 
                 this.board.num_rotates_queued++;
-            } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
-                scoreLayer.updateScore(this.block_type, multiplier);
-
+            } else if(this.block_type < 5) { /* Otherwise, the  block is normal. Therefore the scores get updated. */
+                scoreLayer.updateScore(this.block_type, 3);
             }
 
 
@@ -196,19 +215,24 @@ var Block= cc.Sprite.extend({
 
         else if (left_right > 2/* && up_down < 3*/)
         {
+            if(left_right > 3){
+                this.board.blockQueue.push(new SpecialBlock(0,0,BOARD));
+            }
             //console.log("leftright match, blocktype: "+ this.block_type);
             //console.log("at position: " + this.row + ", " +this.col);
             //Scoring
             var multiplier = left_right - 1;
-            //console.log("MULTIPLIER IS:" + multiplier);
+
+            //Play match audio effect.
+            cc.audioEngine.playEffect(res.match_wav);
+
             // Rotate block is block_type 5.
             if(this.block_type == 5){
                 //console.log("wut wut wut");
                 //this.board.rotate();
                 this.board.num_rotates_queued++;
-            } else { /* Otherwise, the  block is normal. Therefore the scores get updated. */
-                scoreLayer.updateScore(this.block_type, multiplier);
-
+            } else if(this.block_type < 5) { /* Otherwise, the  block is normal. Therefore the scores get updated. */
+                scoreLayer.updateScore(this.block_type, 3);
             }
 
             //console.log(counter_left);
@@ -260,7 +284,8 @@ var Block= cc.Sprite.extend({
         }
         return false;
     },
-    moveTo:function(dest){
+    //Falling is simply a boolean to track whether or not we're hitting the floor because of a swap or because of a fall.
+    moveTo:function(dest, falling){
         this.stopAllActions();
         if(this.locking){
             //If actions were stopped, that means there is an extra lock on the board. Remove it.
@@ -272,12 +297,37 @@ var Block= cc.Sprite.extend({
         this.board.lock();
         this.locking = true;
         var sequence =  new cc.Sequence(new cc.MoveTo(.5,dest),new cc.callFunc(function(a){
+            // This check prevents the hitfloor sound from playing when the player swaps two blocks on the bottom row.
+            if(falling) {
+                cc.audioEngine.playEffect(res.hitfloor_wav);
+            }
             //console.log(a);
-            if(!a.check_matches()){
-                //a.soft_move();
-                //a.soft_move = function(){};
-            //}else{
-                //a.soft_move = function(){};
+            console.log(swapping);
+            if(a.check_matches()) {
+                console.log("matches");
+                //Swapping should be true when two blocks are swapping, [false,block] if one block failed to swap, and [true,block]
+                //if one block succeeded at swapping, and undefined otherwise.
+                if (swapping !=  null) {
+                    if (swapping === true) {
+                        swapping = [true, a];
+                    } else {
+                        swapping = null;
+                        //a.swap(swapping[1], true);
+                    }
+                }
+            }else{
+                console.log("doesn't match");
+                if(swapping != null){
+                    if(swapping === true) {
+                        swapping = [false, a];
+                    }else if(!swapping[0]){
+
+                        a.swap(swapping[1],true);
+                        swapping = null;
+                    }else{
+                        swapping = null;
+                    }
+                }
             }
             if(a.locking == false){
                 console.warn("WARNING: A block was moving without locking the board.");

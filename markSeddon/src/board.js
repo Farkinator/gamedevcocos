@@ -79,11 +79,17 @@ var Board = cc.Sprite.extend({
     click:function(x,y){
         //notifies the board that the block at array coordinates x y is clicked.
         //console.log(x + ', ' + y + " clicked");
+
         if(this.click_queue == null){
             this.click_queue = this.arr[x][y];
+            this.click_queue.selected(true);
             //Indicate to the player that this is the block that they are preparing to switch.
-            this.arr[x][y].selected(true);
         }else{
+            if(this.click_queue == this.arr[x][y]){
+                this.click_queue.selected(false);
+                this.click_queue = null;
+                return;
+            }
             //De-select the block, then check if swappable.
             this.click_queue.selected(false);
             if(this.click_queue.adjacent(this.arr[x][y])){
@@ -91,6 +97,7 @@ var Board = cc.Sprite.extend({
                 this.click_queue = null;
             }else{
                 this.click_queue = this.arr[x][y];
+                this.click_queue.selected(true);
             }
 
         }
@@ -102,8 +109,8 @@ var Board = cc.Sprite.extend({
         }
         var block1 = this.arr[x1][y1];
         var block2 = this.arr[x2][y2];
-        block1.moveTo(this.getCoord(x2,y2));
-        block2.moveTo(this.getCoord(x1,y1));
+        block1.moveTo(this.getCoord(x2,y2), false);
+        block2.moveTo(this.getCoord(x1,y1), false);
         block1.row = y2;
         block1.col = x2;
         block2.row = y1;
@@ -210,7 +217,7 @@ var Board = cc.Sprite.extend({
         //Dropdown should be called if there is an empty (null) square at (x,y). The above blocks will fall, and new
         //blocks will be created until all spaces above and incloding (x,y) have a non-null block.
         //AFTER MOVING, BLOCKS MUST CALL Board.unlock().
-
+        this.dropSound = cc.audioEngine.playEffect(res.dropdown_wav);
         if(this.arr[x][y] != null){
             //console.log("Error: calling dropdown on a square with a tile is an invalid operation.");
             return;
@@ -219,16 +226,20 @@ var Board = cc.Sprite.extend({
             if(y == this.arr_size - 1){
                 //console.log("Top row!");
                 //if this is the top row...
-                //if(this.blockQueue.length > 0){
-                //    temp = this.blockQueue.pop();
-                //    temp.col = y;
-                //    temp.row = x;
-                //}
-                var temp = new Block(x,y,this);
+                var temp;
+                if(this.blockQueue.length > 0){
+                    temp = this.blockQueue.pop();
+                    temp.col = x;
+                    temp.row = y;
+                }else{
+                    temp = new Block(x,y,this);
+                }
                 var tpos = this.getCoord(x,y+1);
                 temp.x = tpos.x;
                 temp.y = tpos.y;
                 //temp.y += this.block_size;
+
+                console.log(this.getCoord(x,y));
                 temp.moveTo(this.getCoord(x,y));
                 this.arr[x][y] = temp;
                 this.addChild(temp);
@@ -348,6 +359,7 @@ var Board = cc.Sprite.extend({
                 a.rotation -= 360;
             }
         }));//cc.Sequence.create(rotate_action,unlock);
+        cc.audioEngine.playEffect(res.rotate_wav);
         this.runAction(sequence);
         //this.runAction(sequence);
     },
@@ -365,6 +377,7 @@ var Board = cc.Sprite.extend({
             this.arr[x][y].locking = false;
         }
         //console.trace();
+        cc.audioEngine.playEffect(res.clearblock_wav);
         this.arr[x][y].removeFromParent(true);
         this.arr[x][y] = null;
 
