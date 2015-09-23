@@ -168,8 +168,7 @@ var Block= cc.Sprite.extend({
             //console.log(this.board.prep_check_moves());
             if (!(this.board.prep_check_moves()))
             {
-                console.log("GAME OVER--------------------------------------------------------------");
-                //game_over();
+                gameOver();
             }
             return true;
         }
@@ -207,8 +206,7 @@ var Block= cc.Sprite.extend({
             //console.log(this.board.prep_check_moves());
             if (!(this.board.prep_check_moves()))
             {
-                console.log("GAME OVER-----------------------------------------------------------");
-                //game_over();
+                gameOver();
             }
             return true
         }
@@ -260,8 +258,7 @@ var Block= cc.Sprite.extend({
                 //console.log(this.board.prep_check_moves());
             if (!(this.board.prep_check_moves()))
             {
-                console.log("GAME OVER----------------------------------------------------------------");
-                //game_over();
+                gameOver();
             }
             return true
         }
@@ -271,8 +268,7 @@ var Block= cc.Sprite.extend({
             //console.log(this.board.prep_check_moves());
             if (!(this.board.prep_check_moves()))
             {
-                console.log("GAME OVER");
-                //game_over();
+                gameOver();
             }
             return false;
         }
