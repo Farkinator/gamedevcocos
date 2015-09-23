@@ -1,5 +1,5 @@
 var res = {
-    helloBG_png : "res/SeddonTitle.png",
+    helloBG_png : "res/TribuneTitle.png",
     start_n_png : "res/PlayButton.png",
     start_s_png : "res/PlayButton.png",
     playBG_png  : "res/BoardBack.png",
