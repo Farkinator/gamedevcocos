@@ -266,7 +266,7 @@ var Block= cc.Sprite.extend({
         else
         {
             //console.log("no match");
-            console.log(this.board.prep_check_moves());
+            //console.log(this.board.prep_check_moves());
             if (!(this.board.prep_check_moves()))
             {
                 console.log("GAME OVER");
@@ -305,7 +305,7 @@ var Block= cc.Sprite.extend({
                         swapping = [true, a];
                     } else {
                         swapping = null;
-                        a.swap(swapping[1], true);
+                        //a.swap(swapping[1], true);
                     }
                 }
             }else{
@@ -313,9 +313,10 @@ var Block= cc.Sprite.extend({
                 if(swapping != null){
                     if(swapping === true) {
                         swapping = [false, a];
-                    }else if(swapping[0]){
-                        swapping = null;
+                    }else if(!swapping[0]){
+
                         a.swap(swapping[1],true);
+                        swapping = null;
                     }else{
                         swapping = null;
                     }
