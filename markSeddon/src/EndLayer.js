@@ -23,7 +23,7 @@ var EndLayer = cc.Layer.extend({
 
         //create the background image for endgame and place at center
         var centerPos = cc.p(winsize.width / 2, winsize.height / 2);
-        var spriteBG = new cc.Sprite(res.playBG_png);
+        var spriteBG = new cc.Sprite(res.gameover_png);
         spriteBG.setPosition(centerPos);
         this.addChild(spriteBG);
 

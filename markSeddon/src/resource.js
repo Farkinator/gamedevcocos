@@ -6,6 +6,7 @@ var res = {
     CloseNormal_png : "res/CloseNormal.png",
     CloseSelected_png : "res/CloseSelected.png",
     board_png: "res/Grid.png",
+    gameover_png: "res/BlankBackground.png",
 
     block1_png: "res/BlockEntertain.png",
     block2_png: "res/BlockPolitics.png",
@@ -31,6 +32,7 @@ var g_resources = [
     res.start_s_png,
     res.playBG_png,
     res.board_png,
+    res.gameover_png,
     res.block1_png,
     res.block2_png,
     res.block3_png,
