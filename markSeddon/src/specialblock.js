@@ -19,6 +19,7 @@ SpecialBlock = Block.extend({
                 }
             }
             if(match) {
+                scoreLayer.gameOver(true);
                 console.log("YAY YOU WIN.");
             }else{
                 this.plainmatch();

@@ -7,6 +7,7 @@ var Block= cc.Sprite.extend({
         if(in_board == undefined){
             console.log("ERROR - BOARD IS UNDEFINED.");
         }
+        swapping = null;
         //Initialization
         if(sprite == undefined){
             var type = this.set_block();
@@ -76,9 +77,15 @@ var Block= cc.Sprite.extend({
         return int; //options[int];
     },
 
-    swap:function(block2){
+    swap:function(block2,secondSwap){
         //console.log("SWAPPED");
+        if(secondSwap){
+            swapping = null;
+        }else{
+            swapping = true;
+        }
         this.board.swap(this.col,this.row,block2.col,block2.row);
+
         //this.soft
         //if (!(this.check_matches() || block2.check_matches()))
         //{
@@ -86,9 +93,6 @@ var Block= cc.Sprite.extend({
         //    console.log("No match.")
         //    //this.board.swap(this.col,this.row,block2.col,block2.row);
         //}
-    },
-    moveDown:function(){
-        this.board.getCoord(this.row, this.col);
     },
     check_matches:function(block2)
     {
@@ -278,7 +282,7 @@ var Block= cc.Sprite.extend({
         }
         return false;
     },
-    moveTo:function(dest){
+    moveTo:function(dest, temporary){
         this.stopAllActions();
         if(this.locking){
             //If actions were stopped, that means there is an extra lock on the board. Remove it.
@@ -291,11 +295,31 @@ var Block= cc.Sprite.extend({
         this.locking = true;
         var sequence =  new cc.Sequence(new cc.MoveTo(.5,dest),new cc.callFunc(function(a){
             //console.log(a);
-            if(!a.check_matches()){
-                //a.soft_move();
-                //a.soft_move = function(){};
-            //}else{
-                //a.soft_move = function(){};
+            console.log(swapping);
+            if(a.check_matches()) {
+                console.log("matches");
+                //Swapping should be true when two blocks are swapping, [false,block] if one block failed to swap, and [true,block]
+                //if one block succeeded at swapping, and undefined otherwise.
+                if (swapping !=  null) {
+                    if (swapping === true) {
+                        swapping = [true, a];
+                    } else {
+                        swapping = null;
+                        a.swap(swapping[1], true);
+                    }
+                }
+            }else{
+                console.log("doesn't match");
+                if(swapping != null){
+                    if(swapping === true) {
+                        swapping = [false, a];
+                    }else if(swapping[0]){
+                        swapping = null;
+                        a.swap(swapping[1],true);
+                    }else{
+                        swapping = null;
+                    }
+                }
             }
             if(a.locking == false){
                 console.warn("WARNING: A block was moving without locking the board.");

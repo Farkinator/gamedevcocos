@@ -51,10 +51,12 @@ var ScoreLayer = cc.Layer.extend({
         this.indivscorelabels[block_type].setString(" "+this.SCORE[block_type]);
     },
     // GAME OVER function. Switches to the game over scene.
-    gameOver:function(){
-
-
-        cc.director.runScene(new GameOverScene(SCORE));
+    gameOver:function(win){
+        if(!win){
+            this.SCORE[6] = Math.sqrt(this.SCORE[6]);
+        }
+        console.log("win message: " + win);
+        cc.director.runScene(new GameOverScene(this.SCORE,win));
 
     }
 });
