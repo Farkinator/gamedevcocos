@@ -3,12 +3,18 @@
  */
 var EndLayer = cc.Layer.extend({
 
-    ctor:function(scoreObj){
+    ctor:function(scoreObj,win){
+        console.log("win message: " + win);
+        if(win){
+            this.win_message = "won";
+        }else{
+            this.win_message = "lost";
+        }
         this._super();
         this.init(scoreObj);
     },
     init:function(scoreObj){
-        winsize = cc.director.getWinSize();
+        var winsize = cc.director.getWinSize();
 
         var running_max = 0;
         //We've got to save which kind of subscore won to use
@@ -28,12 +34,12 @@ var EndLayer = cc.Layer.extend({
         this.addChild(spriteBG);
 
         //Get to displaying the Total Score, front and center.
-        this.totalscore = new cc.LabelTTF("You finished with " + scoreObj[6] + " points!", "Helvetica", 50);
+        this.totalscore = new cc.LabelTTF("You " + this.win_message + " with " + scoreObj[6] + " points!", "Helvetica", 50);
         this.totalscore.setColor(cc.color(0,0,0));//black color
         this.totalscore.setPosition(cc.p(512, winsize.height - 80));
         this.addChild(this.totalscore);
 
-
+        endLayer = this;
         // Fetch the story data from the JSON file containing them.
         cc.loader.loadJson("res/stories.json", function(error, data){
             // Use w_index to find the category of story to display, and display a random story in that category

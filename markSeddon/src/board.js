@@ -103,7 +103,7 @@ var Board = cc.Sprite.extend({
         }
     },
     swap:function(x1,y1,x2,y2){
-        console.log(x1 + "," + y1 + ":" + x2 + "," + y2);
+        //console.log(x1 + "," + y1 + ":" + x2 + "," + y2);
         if(!this.arr[x1][y1].adjacent(this.arr[x2][y2])){
             console.log("warning - swapping two blocks that are not adjacent");
         }
@@ -128,26 +128,84 @@ var Board = cc.Sprite.extend({
                 if (i < (this.arr_size-1))
                 {
                     var n1 = i + 1;
-                    if ((this.arr[n1][j]).are_there_moves(this.arr[i][j]))
+
+                    //Swap the blocks
+                    var temp1 = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = (this.arr[n1][j]).block_type;
+                    (this.arr[n1][j]).block_type = temp1;
+
+                    //Check if the move was successful
+                    if ((this.arr[n1][j]).are_there_moves())
+                    {
+                        //Swap them back if it was
+                        (this.arr[n1][j]).block_type = (this.arr[i][j]).block_type;
+                        (this.arr[i][j]).block_type = temp1;
                         return true;
+                    }
+                    //Swap them back to ensure the board stays the same.
+                    (this.arr[n1][j]).block_type = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = temp1;
                 }
                 if (i > 0)
                 {
                     var n2 = i - 1;
-                    if ((this.arr[n2][j]).are_there_moves(this.arr[i][j]))
+
+                    //Swaps the blocks
+                    var temp2 = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = (this.arr[n2][j]).block_type;
+                    (this.arr[n2][j]).block_type = temp2;
+
+                    //Check if the move was successful
+                    if ((this.arr[n2][j]).are_there_moves())
+                    {
+                        //Swap them back if it was
+                        (this.arr[n2][j]).block_type = (this.arr[i][j]).block_type;
+                        (this.arr[i][j]).block_type = temp2;
                         return true;
+                    }
+                    //Swap them back to ensure the board stays the same
+                    (this.arr[n2][j]).block_type = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = temp2;
                 }
                 if (j < (this.arr_size-1))
                 {
                     var n3 = j + 1;
-                    if ((this.arr[i][n3]).are_there_moves(this.arr[i][j]))
+
+                    //Swap the blocks
+                    var temp3 = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = (this.arr[i][n3]).block_type;
+                    (this.arr[i][n3]).block_type = temp3;
+
+                    if ((this.arr[i][n3]).are_there_moves())
+                    {
+                        //Swap them back if it was
+                        (this.arr[i][n3]).block_type = (this.arr[i][j]).block_type;
+                        (this.arr[i][j]).block_type = temp3;
                         return true;
+                    }
+                    //Swap them back to ensure the board stays the same
+                    (this.arr[i][n3]).block_type = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = temp3;
                 }
-                if (j > (this.arr_size-1))
+                if (j > 0)
                 {
                     var n4 = j - 1;
-                    if ((this.arr[i][n4]).are_there_moves(this.arr[i][j]))
+
+                    //Swap the blocks
+                    var temp4 = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = (this.arr[i][n4]).block_type;
+                    (this.arr[i][n4]).block_type = temp4;
+
+                    if ((this.arr[i][n4]).are_there_moves())
+                    {
+                        //Swap them back if it was
+                        (this.arr[i][n4]).block_type = (this.arr[i][j]).block_type;
+                        (this.arr[i][j]).block_type = temp4;
                         return true;
+                    }
+                    //Swap them back to ensure the board stays the same
+                    (this.arr[i][n4]).block_type = (this.arr[i][j]).block_type;
+                    (this.arr[i][j]).block_type = temp4;
                 }
             }
         }
@@ -162,7 +220,7 @@ var Board = cc.Sprite.extend({
         cc.audioEngine.stopAllEffects();
         this.dropSound = cc.audioEngine.playEffect(res.dropdown_wav);
         if(this.arr[x][y] != null){
-            console.log("Error: calling dropdown on a square with a tile is an invalid operation.");
+            //console.log("Error: calling dropdown on a square with a tile is an invalid operation.");
             return;
         }
         if(y < this.arr_size) {
@@ -230,7 +288,7 @@ var Board = cc.Sprite.extend({
 
 
     arrayRotate:function(){
-        console.log(this.arr);
+        //console.log(this.arr);
         //Rotates the arr array. This should only be called by the local rotate() function!
         var temp = [];
         var arr = this.arr;
@@ -315,7 +373,7 @@ var Board = cc.Sprite.extend({
             return;
         }
         if(this.arr[x][y].locking){
-            console.log("Locking block is getting deleted. Unlocking.");
+            //console.log("Locking block is getting deleted. Unlocking.");
             this.unlock();
             this.arr[x][y].locking = false;
         }
